@@ -1,4 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-unused-vars */
 import axios from 'axios';
+import authHeader from '../../helpers/authHeader';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -13,9 +16,13 @@ const AuthService = () => {
       return response.data;
     });
 
-  const logout = () => {
-    localStorage.removeItem('user');
-  };
+  const logout = () => axios.delete(`${API_URL}logout`, {
+    headers: authHeader,
+  })
+    .then((response) => {
+      localStorage.removeItem('user');
+      return response.data;
+    });
 
   const register = (username, email, password) => axios.post(`${API_URL}signup`, {
     username,
