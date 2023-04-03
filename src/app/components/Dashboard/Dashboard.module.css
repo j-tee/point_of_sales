@@ -1,0 +1,37 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+  }
+  
+  .heading {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  .card {
+    margin-bottom: 2rem;
+  }
+  
+  .cardHeader {
+    background-color: #f5f5f5;
+  }
+  
+  .cardTitle {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .cardBody {
+    padding: 1.5rem;
+  }
+  
+  .footer {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    text-align: center;
+  }
+  

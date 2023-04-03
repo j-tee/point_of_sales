@@ -1,64 +1,65 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container, Nav, NavDropdown, Navbar,
 } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import Register from '../Register/Register';
+import Login from '../Login/Login';
 
 const NavMenu = () => {
-  const { user } = useSelector((state) => state.auth.user) ?? {};
+  const { user } = useSelector((state) => state.auth) ?? {};
+  console.log('USER=>', user);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const calculateModalPosition = () => {
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    return (window.innerHeight - navbarHeight) / 5;
+  };
+  const handleRegisterClick = () => {
+    setRegisterModalOpen(true);
+  };
+  const handleLoginClick = () => {
+    setLoginModalOpen(true);
+  };
   return (
     <div>
       <Navbar bg="primary" expand="lg">
         <Container fluid>
-          <Navbar.Brand href="#home">Sales Forge</Navbar.Brand>
+          <Navbar.Brand href="/">Sales Forge</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link to="/">Dashboard</Nav.Link>
-              <Nav.Link href="#link">Products</Nav.Link>
-              <Nav.Link href="#link">Sales</Nav.Link>
-              <Nav.Link href="#link">Orders</Nav.Link>
-              <Nav.Link href="#link">Customers</Nav.Link>
-              <Nav.Link href="#link">Reports/Analytics</Nav.Link>
-              <Nav.Link href="#link">Settings</Nav.Link>
-              <Nav.Link href="#link">Support</Nav.Link>
-              <Nav.Link href="#link">About</Nav.Link>
+              <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+              <Nav.Link href="/products">Products</Nav.Link>
+              <Nav.Link href="/sales">Sales</Nav.Link>
+              <Nav.Link href="/orders">Orders</Nav.Link>
+              <Nav.Link href="/customers">Customers</Nav.Link>
+              <Nav.Link href="/reports">Reports/Analytics</Nav.Link>
+              <Nav.Link href="/settings">Settings</Nav.Link>
+              <Nav.Link href="support">Support</Nav.Link>
+              <Nav.Link href="/about">About</Nav.Link>
             </Nav>
             <Nav>
-              <NavDropdown bg="primary" title="User" id="basic-nav-dropdown" className="pe-5 me-5">
-                {user && (
-                <>
-                  <NavDropdown.Item><Nav.Link to="/user">User</Nav.Link></NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <Nav.Link to="/user">User</Nav.Link>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item href="#action/3.4">
-                    Separated link
-                  </NavDropdown.Item>
-                </>
-                )}
+              <NavDropdown bg="primary" title={user ? `Welcome ${user.username}` : 'User'} id="basic-nav-dropdown" className="pe-5 me-5">
                 {user ? (
                   <>
-                    <NavDropdown.Item><Nav.Link to="/user">User</Nav.Link></NavDropdown.Item>
                     <NavDropdown.Item>
-                      <Nav.Link to="/profile">{user.username}</Nav.Link>
+                      <Nav.Link to="/profile">Your Profile</Nav.Link>
                     </NavDropdown.Item>
-                    <NavDropdown.Item><Nav.Link to="/logout">Logout</Nav.Link></NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.4">
-                      Separated link
+                    <NavDropdown.Item>
+                      <Nav.Link to="/logout">Logout</Nav.Link>
                     </NavDropdown.Item>
                   </>
                 ) : (
                   <>
                     <NavDropdown.Item>
-                      <Nav.Link to="/login">Login</Nav.Link>
+                      <Nav.Link to="/login" onClick={() => handleLoginClick()}>Login</Nav.Link>
                     </NavDropdown.Item>
                     <NavDropdown.Item>
-                      <Nav.Link to="/register">Signup</Nav.Link>
+                      <Nav.Link to="/register" onClick={() => handleRegisterClick()}>Signup</Nav.Link>
                     </NavDropdown.Item>
                   </>
                 )}
@@ -67,6 +68,18 @@ const NavMenu = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <Register
+        isOpen={registerModalOpen}
+        setRegisterModalOpen={setRegisterModalOpen}
+        onRequestClose={() => setRegisterModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+      />
+      <Login
+        isOpen={loginModalOpen}
+        onRequestClose={() => setLoginModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setLoginModalOpen={setLoginModalOpen}
+      />
     </div>
   );
 };

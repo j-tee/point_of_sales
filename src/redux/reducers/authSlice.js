@@ -7,15 +7,19 @@ import AuthService from '../../app/services/auth/authService';
 const user = JSON.parse(localStorage.getItem('user'));
 
 const initialState = user
-  ? { isLoggedIn: true, user }
-  : { isLoggedIn: false, user: null };
+  ? {
+    isLoggedIn: true, isSuccessful: true, user, message: 'User already registered',
+  }
+  : {
+    isLoggedIn: false, isSuccessful: false, user: null, message: '',
+  };
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, thunkAPI) => {
     try {
       // API call to register user
-      const response = await AuthService.register(userData.username, userData.email, userData.password);
+      const response = await AuthService.register(userData.username, userData.email, userData.password, userData.password_confirmation);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -41,7 +45,7 @@ export const loginUser = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       // API call to login user
-      const response = await AuthService.login(userData.username, userData.password);
+      const response = await AuthService.login(userData.email, userData.password);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -71,14 +75,16 @@ export const authSlice = createSlice({
         state.isLoggedIn = true;
       })
       .addCase(registerUser.fulfilled, (state) => {
-        state.isLoggedIn = false;
+        state.message = 'User successfully registered!!';
+        state.isSuccessful = true;
       })
       .addCase(registerUser.rejected, (state) => {
-        state.isLoggedIn = false;
+        state.message = 'Registration failed!!';
+        state.isSuccessful = false;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.user = action.payload.user;
+        state.user = action.payload;
       })
       .addCase(loginUser.rejected, (state) => {
         state.isLoggedIn = false;

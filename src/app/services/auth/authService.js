@@ -6,8 +6,14 @@ import authHeader from '../../helpers/authHeader';
 const API_URL = 'http://localhost:3000/';
 
 const AuthService = () => {
-  const login = (username, password) => axios
-    .post(`${API_URL}login`, { username, password })
+  const login = (email, password) => axios
+    .post(`${API_URL}login`,
+      {
+        user: {
+          email,
+          password,
+        },
+      })
     .then((response) => {
       if (response.data.accessToken) {
         localStorage.setItem('user', JSON.stringify(response.data));
@@ -24,11 +30,14 @@ const AuthService = () => {
       return response.data;
     });
 
-  const register = (username, email, password) => axios.post(`${API_URL}signup`, {
-    username,
-    email,
-    password,
-  });
+  const register = (username, email, password) => axios.post(`${API_URL}signup`,
+    {
+      user: {
+        username,
+        email,
+        password,
+      },
+    });
 
   return {
     login,

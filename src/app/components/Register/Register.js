@@ -1,19 +1,23 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../../../redux/reducers/authSlice';
+import {
+  Modal, Form, Button, Alert,
+} from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../../../redux/reducers/authSlice';
 
-const Login = (props) => {
+const Register = (props) => {
   const {
-    isOpen, onRequestClose, calculateModalPosition, setLoginModalOpen,
+    isOpen, setRegisterModalOpen, onRequestClose, calculateModalPosition,
   } = props;
+  const { message, isSuccessful } = useSelector((state) => state.auth);
+  const [validated, setValidated] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [validated, setValidated] = useState(false);
   const [error, setError] = useState('');
   const [modalTop, setModalTop] = useState(0);
   const dispatch = useDispatch();
@@ -24,23 +28,24 @@ const Login = (props) => {
   }, [isOpen, calculateModalPosition]);
 
   const handleSubmit = (event) => {
-    event.preventDefault();
     const form = event.currentTarget;
-    // add validation logic here
+    event.preventDefault();
     event.stopPropagation();
     if (form.checkValidity() === true) {
       if (password !== confirmPassword) {
         setError('Passwords do not match');
       } else {
-        // perform registration logic here
         const userData = {
+          username: name,
           email,
           password,
+          password_confirmation: confirmPassword,
         };
-        dispatch(loginUser(userData)).then(() => {
-          setLoginModalOpen(false);
+        dispatch(registerUser(userData)).then(() => {
+          setRegisterModalOpen(false);
         }).catch((error) => {
           setError(error);
+          console.error('An error occurred:', error);
         });
       }
     }
@@ -50,33 +55,29 @@ const Login = (props) => {
   return (
     <Modal show={isOpen} onHide={onRequestClose} size="lg" style={{ marginTop: `${modalTop}px` }}>
       <Modal.Header closeButton>
-        <Modal.Title>Login</Modal.Title>
+        <Modal.Title>Register</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form.Group controlId="formBasicName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="text" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Form.Control.Feedback type="invalid">
+              Please enter your name.
+            </Form.Control.Feedback>
+          </Form.Group>
+
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
+            <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <Form.Control.Feedback type="invalid">
-              Please enter a email.
+              Please enter a valid email address.
             </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
+            <Form.Control type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <Form.Control.Feedback type="invalid">
               Please enter a password.
             </Form.Control.Feedback>
@@ -84,21 +85,21 @@ const Login = (props) => {
 
           <Form.Group controlId="formBasicConfirmPassword">
             <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              required
-            />
+            <Form.Control type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
             <Form.Control.Feedback type="invalid">
-              Please enter a password.
+              Please confirm your password.
             </Form.Control.Feedback>
+            {error && <div className="text-danger">{error}</div>}
           </Form.Group>
 
           <Modal.Footer>
+            <Alert show={(message !== '')} dismissible variant={isSuccessful ? 'sucess' : 'danger'}>
+              <p>
+                {message}
+              </p>
+            </Alert>
             <Button variant="primary" type="submit">
-              Login
+              Register
             </Button>
           </Modal.Footer>
         </Form>
@@ -107,8 +108,4 @@ const Login = (props) => {
   );
 };
 
-Login.propTypes = {};
-
-Login.defaultProps = {};
-
-export default Login;
+export default Register;
