@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../../redux/reducers/authSlice';
 
 const Login = (props) => {
@@ -17,6 +19,7 @@ const Login = (props) => {
   const [error, setError] = useState('');
   const [modalTop, setModalTop] = useState(0);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
     if (isOpen) {
       setModalTop(calculateModalPosition());
@@ -37,8 +40,10 @@ const Login = (props) => {
           email,
           password,
         };
+
         dispatch(loginUser(userData)).then(() => {
           setLoginModalOpen(false);
+          navigate('/dashboard');
         }).catch((error) => {
           setError(error);
         });

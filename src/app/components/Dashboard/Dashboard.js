@@ -8,7 +8,7 @@ import styles from './Dashboard.module.css';
 const Dashboard = () => (
   <Container fluid>
     <header className={styles.header}>
-      <h1 className={styles.heading}>App Name</h1>
+      <h1 className={styles.heading}>Sales Forge</h1>
       <nav>
         {/* Include navigation links for different sections of the dashboard */}
       </nav>

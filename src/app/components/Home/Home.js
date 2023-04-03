@@ -15,9 +15,8 @@ const Home = () => {
   return (
     <div className={styles.app}>
       <header className={styles.header}>
-        <h1>POS Pro</h1>
-        <p>The ultimate POS app for small businesses</p>
-        <Button variant="primary">Sign Up</Button>
+        <h1>SALES FORGE</h1>
+        <p>The ultimate POS for small businesses</p>
       </header>
       <Container>
         <h2>Features</h2>

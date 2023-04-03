@@ -2,7 +2,7 @@
 import axios from 'axios';
 import authHeader from '../../helpers/authHeader';
 
-const API_URL = 'http://localhost:3000/';
+const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const UserService = {
   getPublicContent: () => axios.get(`${API_URL}all`),
