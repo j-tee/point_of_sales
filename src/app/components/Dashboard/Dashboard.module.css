@@ -34,4 +34,85 @@
     padding: 1rem;
     text-align: center;
   }
+
+  /* Colors */
+:root {
+  --color-primary: #387908;
+  --color-secondary: #990000;
+  --color-tertiary: #004c99;
+}
+
+/* Typography */
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  margin-top: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.heading {
+  margin: 0;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+}
+
+nav a {
+  margin-right: 1rem;
+  color: white;
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.stat {
+  margin-right: 2rem;
+}
+
+.stat:last-child {
+  margin-right: 0;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Charts */
+.chartContainer {
+  margin-top: 2rem;
+}
+
+.chartTitle {
+  margin: 0;
+}
+
+.chart {
+  height: 300px;
+  margin-top: 1rem;
+}
+
   
