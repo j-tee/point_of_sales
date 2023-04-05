@@ -6,7 +6,7 @@ import {
   Modal, Form, Button, Alert,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../../../redux/reducers/authSlice';
+import { registerUser } from '../../redux/reducers/authSlice';
 
 const Register = (props) => {
   const {

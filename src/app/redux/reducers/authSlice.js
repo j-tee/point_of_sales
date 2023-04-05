@@ -2,7 +2,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import AuthService from '../../app/services/auth/authService';
+import AuthService from '../../services/auth/authService';
 
 const user = JSON.parse(localStorage.getItem('user'));
 

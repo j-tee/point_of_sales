@@ -4,9 +4,9 @@ import {
   Button, Col, Container, Form, ListGroup, Row,
 } from 'react-bootstrap';
 import {
-  getAllShops, registerShop, updateShop, deleteShop,
-} from './shopSlice';
-import ShopService from '../../app/services/data/shopService';
+  getShops, registerShop, updateShop, deleteShop,
+} from '../../redux/reducers/shopSlice';
+import ShopService from '../../services/data/shopService';
 
 const Shop = () => {
   const dispatch = useDispatch();
@@ -16,7 +16,9 @@ const Shop = () => {
   const user = localStorage.getItem('user');
 
   useEffect(() => {
-    dispatch(getAllShops(user.id));
+    if (user) {
+      dispatch(getShops(user.id));
+    }
   }, [dispatch]);
 
   const handleCreateShop = async (e) => {

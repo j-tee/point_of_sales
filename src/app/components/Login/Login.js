@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../../redux/reducers/authSlice';
+import { loginUser } from '../../redux/reducers/authSlice';
 
 const Login = (props) => {
   const {

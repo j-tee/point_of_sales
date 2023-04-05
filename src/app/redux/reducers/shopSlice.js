@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import ShopService from '../../app/services/data/shopService';
+import ShopService from '../../services/data/shopService';
 
 const initialState = {
   outlets: [],
@@ -68,7 +68,7 @@ export const updateShop = createAsyncThunk(
 );
 
 export const shopSlice = createSlice({
-  name: 'outlet',
+  name: 'shop',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
