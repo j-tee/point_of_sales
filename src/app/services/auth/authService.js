@@ -16,8 +16,11 @@ const AuthService = () => {
         },
       })
     .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem('user', JSON.stringify(response.data));
+      if (response.headers.authorization) {
+        localStorage.setItem('header', JSON.stringify(response.headers));
+        const header = JSON.parse(localStorage.getItem('header'));
+        // console.log('authorization from authheader function=> ', authHeader);
+        localStorage.setItem('user', JSON.stringify(response.data.data));
       }
 
       return response.data;
@@ -28,6 +31,7 @@ const AuthService = () => {
   })
     .then((response) => {
       localStorage.removeItem('user');
+      localStorage.removeItem('header');
       return response.data;
     });
 

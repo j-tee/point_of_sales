@@ -7,12 +7,17 @@ import {
 const Inventory = () => {
   const [products, setProducts] = useState([]);
   const [newProduct, setNewProduct] = useState({
-    name: '',
-    description: '',
-    price: '',
-    quantity: '',
-    expiryDate: '',
+    product_name: '',
+    unit_price: '',
+    qty_in_stock: '',
+    exp_date: '',
+    manufacturer: '',
+    country: '',
+    unit_cost: '',
+    mnf_date: '',
+    category_id: '',
   });
+
   const [notifications, setNotifications] = useState([]);
 
   const handleChange = (event) => {

@@ -10,10 +10,11 @@ import ShopService from '../../services/data/shopService';
 
 const Shop = () => {
   const dispatch = useDispatch();
+  // localStorage.clear();
   const { outlets, message, isLoading } = useSelector((state) => state.shop) ?? {};
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
-  const user = localStorage.getItem('user');
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     if (user) {
@@ -84,22 +85,16 @@ const Shop = () => {
           </Form>
           <ListGroup className="mt-3">
             {outlets.map((shop) => (
-              <ListGroup.Item key={shop.id} className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h5>{shop.name}</h5>
-                  <p>{shop.address}</p>
-                </div>
-                <div>
-                  <Button variant="warning" className="me-2" onClick={() => handleUpdateShop(shop.id, shop)}>
-                    Edit
-                  </Button>
-                  <Button variant="danger" onClick={() => handleDeleteShop(shop.id)}>
-                    Delete
-                  </Button>
-                </div>
-              </ListGroup.Item>
+              React.createElement(ListGroup.Item, { key: shop.id, className: 'd-flex justify-content-between align-items-center' },
+                React.createElement('div', null,
+                  React.createElement('h5', null, shop.name),
+                  React.createElement('p', null, shop.address)),
+                React.createElement('div', null,
+                  React.createElement(Button, { variant: 'warning', className: 'me-2', onClick: () => handleUpdateShop(shop.id, shop) }, 'Edit'),
+                  React.createElement(Button, { variant: 'danger', onClick: () => handleDeleteShop(shop.id) }, 'Delete')))
             ))}
           </ListGroup>
+
         </>
       )}
     </Container>

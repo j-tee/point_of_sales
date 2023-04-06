@@ -20,6 +20,7 @@ const Login = (props) => {
   const [modalTop, setModalTop] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (isOpen) {
       setModalTop(calculateModalPosition());
@@ -43,7 +44,8 @@ const Login = (props) => {
 
         dispatch(loginUser(userData)).then(() => {
           setLoginModalOpen(false);
-          navigate('/dashboard');
+          const user = localStorage.getItem('user');
+          // navigate('/dashboard');
         }).catch((error) => {
           setError(error);
         });

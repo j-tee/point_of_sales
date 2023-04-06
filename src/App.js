@@ -16,6 +16,7 @@ import Setting from './app/components/Setting/Setting';
 import Support from './app/components/Support/Support';
 import About from './app/components/About/About';
 import Inventory from './app/components/Inventory/Inventory';
+import Employee from './app/components/Employee/Employee';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/customers" element={<Customer />} />
         <Route path="/reports" element={<Report />} />
         <Route path="/settings" element={<Setting />} />
+        <Route path="/employees" element={<Employee />} />
         <Route path="/support" element={<Support />} />
         <Route path="/about" element={<About />} />
         <Route path="/inventory" element={<Inventory />} />

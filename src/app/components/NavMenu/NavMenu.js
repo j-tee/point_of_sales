@@ -36,6 +36,7 @@ const NavMenu = () => {
               <Nav.Link href="/sales">SALES</Nav.Link>
               <Nav.Link href="/orders">ORDERS</Nav.Link>
               <Nav.Link href="/customers">CUSTOMERS</Nav.Link>
+              <Nav.Link href="/employees">EMPLOYEES</Nav.Link>
               <Nav.Link href="/reports">REPORTS/ANALYTICS</Nav.Link>
               <Nav.Link href="/settings">SETTINGS</Nav.Link>
               <Nav.Link href="support">SUPPORT</Nav.Link>

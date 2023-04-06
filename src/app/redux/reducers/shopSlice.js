@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import ShopService from '../../services/data/shopService';
 
@@ -11,9 +12,12 @@ export const getShops = createAsyncThunk(
   'shop/getShops',
   async (id, thunkAPI) => {
     try {
+      // console.log('CALL TO getShops =>', id);
       const response = await ShopService.getShops(id);
+      // console.log('CALL fromTHUNK=>', response.data);
       return response.data;
     } catch (error) {
+      // console.log('CALL fromTHUNK ERROR=>', error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },
@@ -22,8 +26,9 @@ export const getShops = createAsyncThunk(
 export const registerShop = createAsyncThunk(
   'shop/registerShops',
   async (shop, thunkAPI) => {
+    // console.log('SHOP=>', shop);
     try {
-      const response = await ShopService.registerStore(shop);
+      const response = await ShopService.registerShop(shop);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -73,17 +78,17 @@ export const shopSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getShops.fulfilled, (state, action) => ({ ...state, outlets: action.payload }));
+      .addCase(getShops.fulfilled, (state, action) => ({ ...state, outlets: action.payload, isLoading: false }));
     builder
       .addCase(getShops.pending, (state) => ({ ...state, isLoading: true }));
     builder
-      .addCase(getShops.rejected, (state) => ({ ...state, message: 'failed to load shops' }));
+      .addCase(getShops.rejected, (state, action) => ({ ...state, isLoading: false, message: action.payload }));
     builder
-      .addCase(registerShop.fulfilled, (state, action) => ({ ...state, message: action.payload }));
+      .addCase(registerShop.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(registerShop.pending, (state) => ({ ...state, isLoading: true }));
     builder
-      .addCase(registerShop.rejected, (state, action) => ({ ...state, message: action.payload }));
+      .addCase(registerShop.rejected, (state, action) => ({ ...state, isLoading: false, message: action.payload }));
     builder
       .addCase(getShop.fulfilled, (state, action) => ({ ...state, outlets: action.payload }));
     builder
