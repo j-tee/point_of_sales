@@ -4,6 +4,7 @@ import authReducer from './reducers/authSlice';
 import counterReducer from './counterSlice';
 import messageReducer from './reducers/messageSlice';
 import shopReducer from './reducers/shopSlice';
+import categoryReducer from './reducers/categorySlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,5 +12,6 @@ export const store = configureStore({
     message: messageReducer,
     auth: authReducer,
     shop: shopReducer,
+    category: categoryReducer,
   },
 });
