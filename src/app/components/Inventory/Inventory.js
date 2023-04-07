@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 /* eslint-disable no-undef */
 /* eslint-disable max-len */
 /* eslint-disable react/no-array-index-key */
@@ -9,12 +10,13 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProduct } from '../../redux/reducers/inventorySlice';
 import { getShops } from '../../redux/reducers/shopSlice';
+import { getCategories } from '../../redux/reducers/categorySlice';
 
 const Inventory = () => {
   // localStorage.clear();
   const user = JSON.parse(localStorage.getItem('user'));
   const { outlets } = useSelector((state) => state.shop);
-  // const { categories } = useSelector((state) => state.category);
+  const { categories } = useSelector((state) => state.category);
   const [products, setProducts] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
   const dispatch = useDispatch();
@@ -30,21 +32,21 @@ const Inventory = () => {
     mnf_date: '',
     category_id: '',
   });
-  const categoryOptions = [
-    { label: '-- Select Category --', value: '' },
-    { label: 'Electronics', value: 'electronics' },
-    { label: 'Clothing', value: 'clothing' },
-    { label: 'Food', value: 'food' },
-    { label: 'Beauty', value: 'beauty' },
-  ];
 
   const [notifications, setNotifications] = useState([]);
 
   const handleChange = (event) => {
+    const { name, value } = event.target;
     setNewProduct({
       ...newProduct,
-      [event.target.name]: event.target.value,
+      [name]: value,
     });
+    switch (name) {
+      case 'store_id': {
+        dispatch(getCategories(parseInt(value, 10)));
+        break;
+      }
+    }
   };
 
   const handleAddProduct = (event) => {
@@ -124,7 +126,18 @@ const Inventory = () => {
               <Form.Control as="select" name="store_id" value={newProduct.store_id} onChange={handleChange} required>
                 <option value="">-- Select Store/Shop --</option>
                 {outlets.map((option) => (
-                  <option key={option.id} value={option.name}>
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Category</Form.Label>
+              <Form.Control as="select" name="category_id" value={newProduct.category_id} onChange={handleChange} required>
+                <option value="">-- Select Category --</option>
+                {categories.map((option) => (
+                  <option key={option.id} value={option.id}>
                     {option.name}
                   </option>
                 ))}
@@ -172,17 +185,6 @@ const Inventory = () => {
             <Form.Group>
               <Form.Label>Manufacture Date</Form.Label>
               <Form.Control type="date" name="mnf_date" value={newProduct.mnf_date} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Category</Form.Label>
-              <Form.Control as="select" name="category_id" value={newProduct.category_id} onChange={handleChange} required>
-                <option value="">-- Select Category --</option>
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Form.Control>
             </Form.Group>
             <Button variant="primary" type="submit">
               Add
