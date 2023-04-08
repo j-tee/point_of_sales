@@ -1,14 +1,15 @@
+/* eslint-disable no-debugger */
 /* eslint-disable default-case */
 /* eslint-disable no-undef */
 /* eslint-disable max-len */
 /* eslint-disable react/no-array-index-key */
 import React, { useEffect, useState } from 'react';
 import {
-  Container, Row, Col, Form, Button, ListGroup, Alert,
+  Container, Row, Col, Form, Button, ListGroup, Alert, Table,
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProduct } from '../../redux/reducers/inventorySlice';
+import { addProduct, getProducts } from '../../redux/reducers/inventorySlice';
 import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
 
@@ -17,8 +18,21 @@ const Inventory = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const { outlets } = useSelector((state) => state.shop);
   const { categories } = useSelector((state) => state.category);
-  const [products, setProducts] = useState([]);
+  const { products } = useSelector((state) => state.inventory) ?? [];
+  console.log('PRODUCTS=>', products);
+  // const [products, setProducts] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
+  const [storeId, setStoreId] = useState(0);
+  const [productName, setProductName] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [unitPrice, setUnitPrice] = useState(0);
+  const [qtyInStock, setQtyInStock] = useState(0);
+  const [expDate, setExpDate] = useState();
+  const [manufacturer, setManufacturer] = useState('');
+  const [description, setDescription] = useState('');
+  const [country, setCountry] = useState('');
+  const [unitCost, setUnitCost] = useState(0);
+  const [mnfDate, setMnfDate] = useState();
   const dispatch = useDispatch();
   const [newProduct, setNewProduct] = useState({
     store_id: '',
@@ -27,6 +41,7 @@ const Inventory = () => {
     qty_in_stock: '',
     exp_date: '',
     manufacturer: '',
+    description: '',
     country: '',
     unit_cost: '',
     mnf_date: '',
@@ -37,43 +52,79 @@ const Inventory = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    switch (name) {
+      case 'store_id': {
+        setStoreId(value);
+        dispatch(getCategories(parseInt(value, 10)));
+        break;
+      }
+      case 'product_name': {
+        setProductName(value);
+        break;
+      }
+      case 'category_id': {
+        setCategoryId(value);
+        const param = {};
+        param.storeId = storeId;
+        param.categoryId = categoryId;
+        dispatch(getProducts(param));
+        break;
+      }
+      case 'unit_price': {
+        setUnitPrice(value);
+        break;
+      }
+      case 'qty_in_stock': {
+        setQtyInStock(value);
+        break;
+      }
+      case 'unit_cost': {
+        setUnitCost(value);
+        break;
+      }
+      case 'country': {
+        setCountry(value);
+        break;
+      }
+      case 'description': {
+        setDescription(value);
+        break;
+      }
+      case 'manufacturer': {
+        setManufacturer(value);
+        break;
+      }
+      case 'exp_date': {
+        setExpDate(value);
+        break;
+      }
+      case 'mnf_date': {
+        setMnfDate(value);
+        break;
+      }
+    }
     setNewProduct({
       ...newProduct,
       [name]: value,
     });
-    switch (name) {
-      case 'store_id': {
-        dispatch(getCategories(parseInt(value, 10)));
-        break;
-      }
-    }
   };
 
   const handleAddProduct = (event) => {
     event.preventDefault();
-    setProducts([...products, {
-      product_name: newProduct.name,
-      unit_price: newProduct.price,
-      qty_in_stock: newProduct.quantity,
-      exp_date: newProduct.expiryDate,
-      manufacturer: newProduct.manufacturer,
-      country: newProduct.country,
-      unit_cost: newProduct.unit_cost,
-      mnf_date: newProduct.mnf_date,
-      category_id: newProduct.category_id,
-    }]);
+    dispatch(addProduct(newProduct));
     setNewProduct({
+      store_id: '',
       product_name: '',
       unit_price: '',
       qty_in_stock: '',
       exp_date: '',
+      description: '',
       manufacturer: '',
       country: '',
       unit_cost: '',
       mnf_date: '',
       category_id: '',
     });
-    dispatch(addProduct(product));
   };
 
   const handleDeleteProduct = (productId) => {
@@ -101,6 +152,7 @@ const Inventory = () => {
 
   const getLowStockProducts = () => products.filter((product) => product.quantity < 10);
   useEffect(() => {
+    dispatch(getProducts({ storeId: 0, categoryId: 0 }));
     if (user) {
       dispatch(getShops(user.id));
     }
@@ -113,7 +165,7 @@ const Inventory = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [newProduct]);
 
   return (
     <Container>
@@ -123,7 +175,7 @@ const Inventory = () => {
           <Form onSubmit={handleAddProduct}>
             <Form.Group>
               <Form.Label>Shops/Stores</Form.Label>
-              <Form.Control as="select" name="store_id" value={newProduct.store_id} onChange={handleChange} required>
+              <Form.Control as="select" name="store_id" value={storeId} onChange={handleChange} required>
                 <option value="">-- Select Store/Shop --</option>
                 {outlets.map((option) => (
                   <option key={option.id} value={option.id}>
@@ -134,7 +186,7 @@ const Inventory = () => {
             </Form.Group>
             <Form.Group>
               <Form.Label>Category</Form.Label>
-              <Form.Control as="select" name="category_id" value={newProduct.category_id} onChange={handleChange} required>
+              <Form.Control as="select" name="category_id" value={categoryId} onChange={handleChange} required>
                 <option value="">-- Select Category --</option>
                 {categories.map((option) => (
                   <option key={option.id} value={option.id}>
@@ -145,31 +197,39 @@ const Inventory = () => {
             </Form.Group>
             <Form.Group>
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" name="name" value={newProduct.name} onChange={handleChange} required />
+              <Form.Control type="text" name="product_name" value={productName} onChange={handleChange} required />
             </Form.Group>
             <Form.Group>
               <Form.Label>Description</Form.Label>
-              <Form.Control type="text" name="description" value={newProduct.description} onChange={handleChange} required />
+              <Form.Control type="text" name="description" value={description} onChange={handleChange} required />
             </Form.Group>
             <Form.Group>
               <Form.Label>Price</Form.Label>
-              <Form.Control type="number" name="price" value={newProduct.price} onChange={handleChange} required />
+              <Form.Control type="number" name="unit_price" value={unitPrice} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Unit Cost</Form.Label>
+              <Form.Control type="number" name="unit_cost" value={unitCost} onChange={handleChange} />
             </Form.Group>
             <Form.Group>
               <Form.Label>Quantity</Form.Label>
-              <Form.Control type="number" name="quantity" value={newProduct.quantity} onChange={handleChange} required />
+              <Form.Control type="number" name="qty_in_stock" value={qtyInStock} onChange={handleChange} required />
             </Form.Group>
             <Form.Group>
               <Form.Label>Expiry Date</Form.Label>
-              <Form.Control type="date" name="expiryDate" value={newProduct.expiryDate} onChange={handleChange} />
+              <Form.Control type="date" name="expiry_date" value={expDate} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Manufacture Date</Form.Label>
+              <Form.Control type="date" name="mnf_date" value={mnfDate} onChange={handleChange} />
             </Form.Group>
             <Form.Group>
               <Form.Label>Manufacturer</Form.Label>
-              <Form.Control type="text" name="manufacturer" value={newProduct.manufacturer} onChange={handleChange} />
+              <Form.Control type="text" name="manufacturer" value={manufacturer} onChange={handleChange} />
             </Form.Group>
             <Form.Group>
               <Form.Label>Country</Form.Label>
-              <Form.Control as="select" name="country" value={newProduct.country} onChange={handleChange} required>
+              <Form.Control as="select" name="country" value={country} onChange={handleChange}>
                 <option value="">-- Select Country --</option>
                 {countryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -177,14 +237,6 @@ const Inventory = () => {
                   </option>
                 ))}
               </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Unit Cost</Form.Label>
-              <Form.Control type="number" name="unit_cost" value={newProduct.unit_cost} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Manufacture Date</Form.Label>
-              <Form.Control type="date" name="mnf_date" value={newProduct.mnf_date} onChange={handleChange} />
             </Form.Group>
             <Button variant="primary" type="submit">
               Add
@@ -246,45 +298,50 @@ const Inventory = () => {
           )}
         </Col>
         <Col sm={9}>
-          <h3>Product List</h3>
+          <h3>Inventory</h3>
           {products.length === 0 ? (
             <Alert variant="info">No products added</Alert>
           ) : (
-            <ListGroup>
-              {products.map((product) => (
-                <ListGroup.Item key={product.id}>
-                  <strong>{product.name}</strong>
-                  {' '}
-                  -
-                  {' '}
-                  {product.description}
-                  {' '}
-                  (
-                  {product.quantity}
-                  {' '}
-                  left)
-                  {product.expiryDate && new Date(product.expiryDate) < new Date() ? (
-                    <Alert variant="danger" className="float-right">Expired!</Alert>
-                  ) : null}
-                  <Button className="float-right" variant="danger" size="sm" onClick={() => handleDeleteProduct(product.id)}>
-                    Delete
-                  </Button>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Description</th>
+                  <th>Qty In Stock</th>
+                  <th>Inventory Date</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product.id}>
+                    <td><strong>{product.product_name}</strong></td>
+                    <td>{product.description}</td>
+                    <td>{product.qty_in_stock}</td>
+                    <td>{new Date(product.created_at).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                    <td>
+                      {product.exp_date && new Date(product.exp_date) < new Date() ? (
+                        <Alert variant="danger">Expired!</Alert>
+                      ) : null}
+                      <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(product.id)}>Delete</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           )}
           {getExpiringProducts().length > 0 ? (
             <Alert variant="warning">
               The following products are expiring soon:
               {' '}
-              {getExpiringProducts().map((product) => product.name).join(', ')}
+              {getExpiringProducts().map((product) => product.product_name).join(', ')}
             </Alert>
           ) : null}
           {getLowStockProducts().length > 0 ? (
             <Alert variant="warning">
               The following products are running low on stock:
               {' '}
-              {getLowStockProducts().map((product) => product.name).join(', ')}
+              {getLowStockProducts().map((product) => product.product_name).join(', ')}
             </Alert>
           ) : null}
         </Col>

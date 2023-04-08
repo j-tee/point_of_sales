@@ -29,11 +29,11 @@ const NavMenu = () => {
           <Navbar.Brand href="/">Sales Forge</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
+            <Nav className="me-auto menu-font fw-bolder">
               <Nav.Link href="/dashboard">DASHBOARD</Nav.Link>
-              <Nav.Link href="/products">PRODUCTS</Nav.Link>
+              <Nav.Link href="/products">SALES</Nav.Link>
               <Nav.Link href="/inventory">INVENTORY</Nav.Link>
-              <Nav.Link href="/sales">SALES</Nav.Link>
+              <Nav.Link href="/sales">BALANCE SHEET</Nav.Link>
               <Nav.Link href="/orders">ORDERS</Nav.Link>
               <Nav.Link href="/customers">CUSTOMERS</Nav.Link>
               <Nav.Link href="/employees">EMPLOYEES</Nav.Link>

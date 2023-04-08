@@ -9,7 +9,7 @@ const initialState = {
 };
 
 export const addProduct = createAsyncThunk(
-  'product/addProduct',
+  'inventory/addProduct',
   async (product, thunkAPI) => {
     try {
       const response = InventoryService.addProduct(product);
@@ -21,10 +21,10 @@ export const addProduct = createAsyncThunk(
 );
 
 export const getProducts = createAsyncThunk(
-  'product/getProduct',
+  'inventory/getProducts',
   async (param, thunkAPI) => {
     try {
-      const response = InventoryService.getProducts(param.storeId, param.categoryId);
+      const response = await InventoryService.getProducts(param.storeId, param.categoryId);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -44,7 +44,7 @@ export const inventorySlice = createSlice({
     builder
       .addCase(addProduct.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
-      .addCase(getProducts.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+      .addCase(getProducts.fulfilled, (state, action) => ({ ...state, products: action.payload, isLoading: false }));
     builder
       .addCase(getProducts.pending, (state) => ({ ...state, isLoading: true }));
     builder
