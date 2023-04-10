@@ -1,71 +1,79 @@
-import React from 'react';
-import { Card, Button } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import {
+  Card, Button, Row, Col,
+} from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import Order from '../Order/Order';
+import { getProducts } from '../../redux/reducers/inventorySlice';
 
-const inventory = [
-  {
-    id: 1,
-    name: 'Widget A',
-    description: 'This is Widget A.',
-    price: 10.99,
-    image: 'https://via.placeholder.com/150',
-    quantity: 10,
-    category: 'Widgets',
-  },
-  {
-    id: 2,
-    name: 'Widget B',
-    description: 'This is Widget B.',
-    price: 7.99,
-    image: 'https://via.placeholder.com/150',
-    quantity: 5,
-    category: 'Widgets',
-  },
-  {
-    id: 3,
-    name: 'Widget C',
-    description: 'This is Widget C.',
-    price: 15.99,
-    image: 'https://via.placeholder.com/150',
-    quantity: 2,
-    category: 'Widgets',
-  },
-];
-
-const Product = () => (
-  <div className="container">
-    <h2>Products</h2>
-    <div className="row">
-      {inventory.map((product) => (
-        <div className="col-md-4 mb-4" key={product.id}>
-          <Card>
-            <Card.Img variant="top" src={product.image} />
-            <Card.Body>
-              <Card.Title>{product.name}</Card.Title>
-              <Card.Text>{product.description}</Card.Text>
-              <Card.Text>
-                $
-                {product.price.toFixed(2)}
-              </Card.Text>
-              <Card.Text>
-                Quantity:
-                {' '}
-                {product.quantity}
-              </Card.Text>
-              <Card.Text>
-                Category:
-                {' '}
-                {product.category}
-              </Card.Text>
-              <Button variant="primary" disabled={product.quantity === 0}>
-                Add to Cart
-              </Button>
-            </Card.Body>
-          </Card>
-
-        </div>
-      ))}
+const Product = () => {
+  const { products } = useSelector((state) => state.inventory);
+  const dispatch = useDispatch();
+  let storeId = 0;
+  let prodId;
+  const handleAddToCart = (id, productId = 0) => {
+    storeId = id;
+    prodId = productId;
+    console.log('store and prod Ids', prodId, storeId);
+  };
+  const params = {
+    storeId,
+    categoryId: 0,
+  };
+  useEffect(() => {
+    dispatch(getProducts(params));
+  }, []);
+  return (
+    <div className="container-fluid">
+      <Row>
+        <Col md={8}>
+          <h1>Products</h1>
+          <hr />
+        </Col>
+        <Col md={4}>
+          <h1>Orders</h1>
+          <hr />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={8}>
+          <Row>
+            {products.map((product) => (
+              <div className="col-md-4 mb-4" key={product.id}>
+                <Card>
+                  <Card.Img variant="top" src={product.image} />
+                  <Card.Body>
+                    <Card.Title>{product.name}</Card.Title>
+                    <Card.Text>{product.description}</Card.Text>
+                    <Card.Text>
+                      $
+                      {product.unit_price}
+                    </Card.Text>
+                    <Card.Text>
+                      Quantity:
+                      {' '}
+                      {product.qty_in_stock}
+                    </Card.Text>
+                    <Card.Text>
+                      Category:
+                      {' '}
+                      {product.category.name}
+                    </Card.Text>
+                    <Button variant="primary" onClick={() => handleAddToCart(product.store_id, product.id)} disabled={product.qty_in_stock === 0}>
+                      Add to Cart
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </div>
+            ))}
+          </Row>
+        </Col>
+        <Col md={4}>
+          <Order storeId={storeId} productId={prodId} />
+        </Col>
+      </Row>
     </div>
-  </div>
-);
+  );
+};
 
 export default Product;

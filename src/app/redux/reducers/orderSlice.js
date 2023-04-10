@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import OrderService from '../../services/data/orderService';
 
@@ -17,7 +18,7 @@ export const getOrders = createAsyncThunk(
   'order/getOrders',
   async (params, thunkAPI) => {
     try {
-      const response = await OrderService.getOrders(params.storeId, params.customerId);
+      const response = await OrderService.getOrders(params.storeId, params.customerId, params.status);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

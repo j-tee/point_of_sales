@@ -19,7 +19,7 @@ const Inventory = () => {
   const { outlets } = useSelector((state) => state.shop);
   const { categories } = useSelector((state) => state.category);
   const { products } = useSelector((state) => state.inventory) ?? [];
-  console.log('PRODUCTS=>', products);
+  // console.log('PRODUCTS=>', products);
   // const [products, setProducts] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
   const [storeId, setStoreId] = useState(0);

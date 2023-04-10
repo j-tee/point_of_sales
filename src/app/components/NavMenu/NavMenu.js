@@ -1,17 +1,21 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 import {
   Container, Nav, NavDropdown, Navbar,
 } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import Register from '../Register/Register';
 import Login from '../Login/Login';
+import ShoppingCartIcon from '../ShoppingCartIcon';
+
+const CartContext = createContext();
 
 const NavMenu = () => {
   const { user } = useSelector((state) => state.auth) ?? {};
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [cart, setCart] = useState([]);
   const calculateModalPosition = () => {
     const navbarHeight = document.querySelector('.navbar').offsetHeight;
     return (window.innerHeight - navbarHeight) / 5;
@@ -41,6 +45,13 @@ const NavMenu = () => {
               <Nav.Link href="/settings">SETTINGS</Nav.Link>
               <Nav.Link href="support">SUPPORT</Nav.Link>
               <Nav.Link href="/about">ABOUT</Nav.Link>
+              <Nav.Link href="/shoppingcart">
+                <CartContext.Provider value={{ cart, setCart }}>
+                  <div>
+                    <ShoppingCartIcon cartCount={cart.length} />
+                  </div>
+                </CartContext.Provider>
+              </Nav.Link>
             </Nav>
             <Nav>
               <NavDropdown bg="primary" title={user ? `Welcome ${user.username}` : 'User'} id="basic-nav-dropdown" className="pe-5 me-5">

@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../redux/reducers/authSlice';
 
 const Login = (props) => {
@@ -20,6 +20,7 @@ const Login = (props) => {
   const [modalTop, setModalTop] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (isOpen) {
@@ -45,7 +46,7 @@ const Login = (props) => {
         dispatch(loginUser(userData)).then(() => {
           setLoginModalOpen(false);
           const user = localStorage.getItem('user');
-          // navigate('/dashboard');
+          return <Navigate to={location.pathname} />;
         }).catch((error) => {
           setError(error);
         });
