@@ -1,13 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 
-const OrderLineItem = ({ orderId, productId }) => {
-  console.log(orderId, productId);
+const OrderLineItem = ({ productId }) => {
+  const { order } = useSelector((state) => state.order) || {};
+  const dispatch = useDispatch();
+  useEffect(() =>{
+
+  })
   return (
     <div>
       <h1>Order Line Items</h1>
-      {orderId}
+      {order.id}
       {' '}
       {productId}
     </div>
@@ -15,7 +20,6 @@ const OrderLineItem = ({ orderId, productId }) => {
 };
 
 OrderLineItem.propTypes = {
-  orderId: PropTypes.number.isRequired,
   productId: PropTypes.number.isRequired,
 };
 

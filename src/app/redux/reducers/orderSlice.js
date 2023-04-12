@@ -18,7 +18,7 @@ export const getOrders = createAsyncThunk(
   'order/getOrders',
   async (params, thunkAPI) => {
     try {
-      const response = await OrderService.getOrders(params.storeId, params.customerId, params.status);
+      const response = await OrderService.getOrders(params.store_id, params.customer_id, params.status);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -30,7 +30,8 @@ export const addOrder = createAsyncThunk(
   'order/addOrder',
   async (order, thunkAPI) => {
     try {
-      const response = await OrderService.addOrders(order);
+      console.log('-------------thunkAPI order', order);
+      const response = await OrderService.addOrder(order);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -99,8 +100,8 @@ export const orderSlice = createSlice({
     builder
       .addCase(addOrder.pending, (state) => ({ ...state, isLoading: true }));
     builder
-      .addCase(addOrder.rejected, (state, action) => ({
-        ...state, message: action.payload, isLoading: false,
+      .addCase(addOrder.rejected, (state) => ({
+        ...state, message: 'failed to add order', isLoading: false,
       }));
     builder
       .addCase(updateOrder.fulfilled, (state, action) => ({
@@ -109,12 +110,12 @@ export const orderSlice = createSlice({
     builder
       .addCase(updateOrder.pending, (state) => ({ ...state, isLoading: true }));
     builder
-      .addCase(updateOrder.rejected, (state, action) => ({
-        ...state, message: action.payload, isLoading: false,
+      .addCase(updateOrder.rejected, (state) => ({
+        ...state, message: 'failed to update order', isLoading: false,
       }));
     builder
-      .addCase(deleteOrder.fulfilled, (state, action) => ({
-        ...state, message: action.payload, isLoading: false,
+      .addCase(deleteOrder.fulfilled, (state) => ({
+        ...state, message: 'failed to delete order', isLoading: false,
       }));
     builder
       .addCase(deleteOrder.pending, (state) => ({ ...state, isLoading: true }));

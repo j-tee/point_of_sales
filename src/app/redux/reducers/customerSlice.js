@@ -68,11 +68,27 @@ export const getCustomer = createAsyncThunk(
     }
   },
 );
+
+export const resetCustomer = createAsyncThunk(
+  'customer/resetCustomer',
+  async (_, thunkAPI) => {
+    try {
+      const response = await CustomerService.resetCustomer();
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
 export const customerSlice = createSlice({
   name: 'customer',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(resetCustomer.fulfilled, (state, action) => ({
+        ...state, customer: action.payload, message: 'Customer information successfully reset', isLoading: false,
+      }));
     builder
       .addCase(getCustomer.fulfilled, (state, action) => ({
         ...state, customer: action.payload, message: 'Customer information successfully loaded', isLoading: false,
@@ -95,7 +111,7 @@ export const customerSlice = createSlice({
         ...state, customer: action.payload, message: 'Customer information successfully added', isLoading: false,
       }));
     builder
-      .addCase(addCustomer.pending, (state) => ({ ...state, isLoading: true }));
+      .addCase(addCustomer.pending, (state) => ({ ...state, isLoading: true, message: '' }));
     builder
       .addCase(addCustomer.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder

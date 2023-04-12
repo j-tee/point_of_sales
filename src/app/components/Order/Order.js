@@ -1,58 +1,68 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import PropTypes from 'prop-types';
-import Customer from '../Customer/Customer';
-import { getOrders } from '../../redux/reducers/orderSlice';
-import OrderLineItem from '../OrderLineItem/OrderLineItem';
+import PropTypes from 'prop-types';
+import { addOrder, getOrders } from '../../redux/reducers/orderSlice';
 
-const Order = (storeId, productId) => {
-  const { orders } = useSelector((state) => state.order);
+const Order = ({ storeId, trigger }) => {
+  const { order } = useSelector((state) => state.order);
+  const { customer } = useSelector((state) => state.customer) || {};
   const dispatch = useDispatch();
-  const orderOject = {
-    customer_id: 0,
-    store_id: storeId,
-    status: 'pending',
-  };
+  // const [orderObject, setOrderObject] = useState({});
+  const [params, setParams] = useState({});
 
-  const updateOrderObject = (id) => {
-    orderOject.customerId = id;
-  };
+  console.log('storeId in Order:', storeId);
+  console.log('customerId in Order:', customer.id);
+
+  // useEffect(() => {
+  //   setOrderObject({
+  //     customer_id: customer.id,
+  //     store_id: storeId,
+  //     status: 'pending',
+  //   });
+  // }, [storeId, customer.id]);
 
   useEffect(() => {
-    const params = {
-      storeId,
-      customerId: orderOject.customer_id,
-    };
-    if (params.customerId > 0) {
-      dispatch(getOrders(params));
+    setParams({
+      store_id: storeId,
+      customer_id: customer.id,
+      status: 'pending',
+      employee_id: 0,
+    });
+  }, [storeId, customer.id]);
+
+  const dispatchAddOrder = useCallback(() => {
+    dispatch(addOrder(params));
+  }, [dispatch, params]);
+
+  const dispatchGetOrders = useCallback(() => {
+    dispatch(getOrders(params));
+  }, [dispatch, params]);
+
+  useEffect(() => {
+    if (Object.keys(order).length === 0 && trigger) {
+      Promise.all([dispatchAddOrder()])
+        .then(() => console.log('Orders added and fetched successfully'))
+        .catch((error) => console.log('Error:', error));
     }
-  }, [dispatch, orderOject, storeId]);
+  }, [dispatchAddOrder, dispatchGetOrders, params, customer.id, order, trigger]);
+
   return (
     <>
-      <Customer updateOrderObject={updateOrderObject} />
-      <div>
-        {orders && orders.map((order) => (
-          <div key={order.id}>
-            <h4>
-              status:
-              {' '}
-              {order.status}
-              total amount:
-              {' '}
-              {order.total}
-            </h4>
-            <OrderLineItem orderId={order.id} productId={productId} />
-          </div>
-        ))}
-      </div>
+      <h4>
+        {`Order ID: ${order.id ? order.id : 'XXXX'} Customer ID:${customer.id ? customer.id : 'XXXX'}`}
+      </h4>
     </>
   );
 };
 
-Order.propTypes = {};
-
-Order.defaultProps = {};
+Order.propTypes = {
+  storeId: PropTypes.number.isRequired,
+  trigger: PropTypes.number.isRequired,
+};
 
 export default Order;

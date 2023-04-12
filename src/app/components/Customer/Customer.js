@@ -1,21 +1,28 @@
+/* eslint-disable max-len */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Form, FormGroup, FormLabel, FormControl, Row,
 } from 'react-bootstrap';
 import Casual from 'casual-browserify';
-import { addCustomer, updateCustomer } from '../../redux/reducers/customerSlice';
+import { addCustomer, resetCustomer, updateCustomer } from '../../redux/reducers/customerSlice';
 
-const Customer = ({ updateOrderObject }) => {
-  const { customer } = useSelector((state) => state.customer) ?? {};
+const Customer = ({ setAddToCartButtonStatus }) => {
+  const { customer } = useSelector((state) => state.customer) || {};
+  // const [customerId, setCustomerId] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [initialLoad, setInitialLoad] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const dispatch = useDispatch();
+
+  // console.log('New storeId from customer:=>', storeId);
+  // console.log('New productId from customer:=>', productId);
+  // console.log('CUSTOMER=>', customer);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,22 +31,33 @@ const Customer = ({ updateOrderObject }) => {
       customer.email = email;
       customer.phone = phone;
       customer.address = address;
+      dispatch(updateCustomer({
+        id: customer.id, name, email, phone, address,
+      }));
     }
-    dispatch(updateCustomer(customer)).then(() => {
-      updateOrderObject(customer.id);
-    });
     setName('');
     setEmail('');
     setPhone('');
     setAddress('');
   };
-  // const customerObject = {
-  //   name, email, phone, address,
+  // const handleCustomerAdded = (addedCustomer) => {
+  //   // console.log('addedCustomer=>handleCustomerAdded', addedCustomer.payload.id);
+  //   setCustomerId(addedCustomer.payload.id);
+  //   console.log('customerId from handleCustomerAdded =>', customerId);
   // };
 
-  useEffect(() => {
-    console.log('useEffect called');
-    if (!isChecked) {
+  // useEffect(() => {
+  //   console.log('useEffect called with CUSTOMER=>', customer);
+
+  // }, [isChecked, initialLoad, onCustomerAdded, customer, dispatch]);
+
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
+  const startTransaction = () => {
+    if (!isChecked && initialLoad) {
+      setAddToCartButtonStatus(false);
+      console.log('Start Transaction', initialLoad, isChecked);
       const customerObject = {
         name: `${Casual.first_name} ${Casual.last_name}`,
         email: Casual.email,
@@ -47,15 +65,21 @@ const Customer = ({ updateOrderObject }) => {
         address: `${Casual.address} ${Casual.city}, ${Casual.state_abbr} ${Casual.zip}`,
       };
       dispatch(addCustomer(customerObject));
+      setInitialLoad(false);
     }
-  }, [isChecked]);
-
-  const handleCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
   };
-
+  const completeTransaction = () => {
+    setAddToCartButtonStatus(true);
+    dispatch(resetCustomer());
+    setInitialLoad(true);
+  };
   return (
     <div>
+      <Row>
+        {Object.keys(customer).length === 0 ? <Button variant="success" onClick={startTransaction}>Start Transaction</Button>
+          : <Button variant="danger" onClick={completeTransaction}>Close Transaction</Button>}
+
+      </Row>
       <Row>
         <Form>
           <Form.Check
@@ -109,5 +133,5 @@ const Customer = ({ updateOrderObject }) => {
     </div>
   );
 };
-
+Customer.propTypes = {};
 export default Customer;
