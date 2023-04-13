@@ -8,9 +8,11 @@ import categoryReducer from './reducers/categorySlice';
 import inventoryReducer from './reducers/inventorySlice';
 import orderReducer from './reducers/orderSlice';
 import customerReducer from './reducers/customerSlice';
+import orderlineReducer from './reducers/orderlineSlice';
 
 export const store = configureStore({
   reducer: {
+    orderline: orderlineReducer,
     counter: counterReducer,
     message: messageReducer,
     auth: authReducer,

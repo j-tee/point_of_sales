@@ -101,7 +101,7 @@ const Product = () => {
             <Order trigger={trigger} storeId={storeId} productId={productId} categoryId={categoryId} startOrder={startOrder} orderStatus={orderStatus} />
           </Row>
           <Row>
-            <OrderLineItem productId={productId} />
+            <OrderLineItem productId={productId} trigger={trigger} />
           </Row>
         </Col>
       </Row>

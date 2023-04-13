@@ -5,7 +5,7 @@ import CustomerService from '../../services/data/customerService';
 const initialState = {
   customrs: [],
   customer: {},
-  message: String,
+  message: '',
   isLoading: false,
 };
 
