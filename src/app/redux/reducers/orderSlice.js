@@ -30,7 +30,6 @@ export const addOrder = createAsyncThunk(
   'order/addOrder',
   async (order, thunkAPI) => {
     try {
-      console.log('-------------thunkAPI order', order);
       const response = await OrderService.addOrder(order);
       return response.data;
     } catch (error) {

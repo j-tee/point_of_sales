@@ -18,7 +18,8 @@ export const getOrderLineItems = createAsyncThunk(
   'orderline/getOrderLineItems',
   async (params, thunkAPI) => {
     try {
-      const response = await OrderLineService.getOrderLineItems(params.orderId, params.customerId, params.productId);
+      const response = await OrderLineService.getOrderLineItems(params.orderId, params.customerId, params.productId, params.page, params.perPage);
+      console.log('=================reponse.data=================', response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -30,7 +31,7 @@ export const updateOrderLineItem = createAsyncThunk(
   'orderline/updateOrderLineItem',
   async (orderLineItem, thunkAPI) => {
     try {
-      const response = await OrderLineService.updateOrderLineItem(orderLineItem);
+      const response = await OrderLineService.updateOrderLineItem(orderLineItem.id, orderLineItem);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -54,6 +55,7 @@ const initialState = {
   isLoading: false,
   message: '',
   lineItem: {},
+  pagination: {},
 };
 const OrderlineSlice = createSlice({
   name: 'orderline',
@@ -69,7 +71,11 @@ const OrderlineSlice = createSlice({
       .addCase(addOrderLineItem.rejected, (state) => ({ ...state, isLoading: false, message: 'Failed to add record to database' }));
     builder
       .addCase(getOrderLineItems.fulfilled, (state, action) => ({
-        ...state, lineItems: action.payload, isLoading: false, message: 'Items fetched successfully',
+        ...state,
+        lineItems: action.payload.order_line_items.data,
+        isLoading: false,
+        message: 'Items fetched successfully',
+        pagination: action.payload.pagination,
       }));
     builder.addCase(getOrderLineItems.pending, (state) => ({ ...state, isLoading: true, message: 'Loading data' }));
     builder

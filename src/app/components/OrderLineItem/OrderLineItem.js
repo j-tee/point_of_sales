@@ -1,30 +1,78 @@
+/* eslint-disable default-case */
 /* eslint-disable max-len */
 /* eslint-disable no-debugger */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table } from 'react-bootstrap';
-import { addOrderLineItem, getOrderLineItems } from '../../redux/reducers/orderlineSlice';
+import {
+  Pagination, Table, DropdownButton, Dropdown, Button,
+} from 'react-bootstrap';
+import {
+  addOrderLineItem, getOrderLineItem, getOrderLineItems, updateOrderLineItem,
+} from '../../redux/reducers/orderlineSlice';
 
 const OrderLineItem = ({ productId, trigger }) => {
-  const { lineItems } = useSelector((state) => state.orderline);
+  const { lineItems, pagination } = useSelector((state) => state.orderline);
   const { customer } = useSelector((state) => state.customer);
   const { order } = useSelector((state) => state.order) || {};
-  const { lineItem } = useSelector((state) => state.orderline) || {};
-  const [orderObject, setOrderObject] = useState({});
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (trigger && order.id) {
-      dispatch(addOrderLineItem({ product_id: productId, order_id: order.id, quantity: 1 }));
-    }
-  }, [dispatch, productId, trigger, order.id]);
+  const [lineItemUpdated, setlineItemUpdated] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  // const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
-    // debugger;
-    setOrderObject(order);
-    dispatch(getOrderLineItems({ orderId: order.id, customerId: customer.id, productId }));
-  }, [dispatch, lineItem, order.id, productId, trigger, order, orderObject.id, customer.id]);
+    if (trigger && order?.id) {
+      dispatch(addOrderLineItem({ product_id: productId, order_id: order.id, quantity: 1 }))
+        .then(() => (setlineItemUpdated(true)));
+    }
+  }, [dispatch, productId, trigger, order]);
+
+  useEffect(() => {
+    if (order.id && customer?.id && productId && trigger) {
+      if (lineItemUpdated) {
+        dispatch(getOrderLineItems({
+          orderId: order?.id, customerId: customer?.id, productId, page: currentPage, perPage: itemsPerPage,
+        })).then((res) => {
+          setTotalPages(Math.ceil(res.data.pagination.total_items / itemsPerPage));
+        });
+      }
+      setlineItemUpdated(false);
+    }
+  }, [dispatch, order.id, customer?.id, productId, currentPage, itemsPerPage, lineItemUpdated, trigger]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setlineItemUpdated(true);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+  const hanleQtyUpdate = (update, qty, id) => {
+    const orderlineItem = dispatch(getOrderLineItem(id))
+      .then(() => {
+        switch (update) {
+          case 'increase': {
+            orderlineItem.quantity = qty + 1;
+            break;
+          }
+          case 'decrease': {
+            orderlineItem.quantity = qty - 1;
+            break;
+          }
+        }
+        orderlineItem.id = id;
+        dispatch(updateOrderLineItem(orderlineItem))
+          .then(() => {
+            setlineItemUpdated(true);
+          });
+      });
+  };
+
   return (
     <div className="p-3">
       <Table striped bordered hover variant="dark">
@@ -38,17 +86,53 @@ const OrderLineItem = ({ productId, trigger }) => {
           </tr>
         </thead>
         <tbody>
-          {lineItems.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.product_id}</td>
-              <td>{item.quantity}</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
+          {lineItems.length > 0 ? (
+            lineItems.map((item) => (
+              <tr key={item.attributes.id}>
+                <td>{item.attributes.id}</td>
+                <td>{item.attributes.product_name}</td>
+                <td>
+                  <Button onClick={() => hanleQtyUpdate('decrease', item.attributes.quantity, item.attributes.id)} id={`${item.attributes.id}-decrease`} variant="transparent" className="text-white">
+                    -
+                  </Button>
+                  {item.attributes.quantity}
+                  <Button id={`${item.attributes.id}-increase`} onClick={() => hanleQtyUpdate('increase', item.attributes.quantity, item.attributes.id)} variant="transparent" className="text-white">
+                    +
+                  </Button>
+                </td>
+                <td>
+                  GHS
+                  {item.attributes.unit_price}
+                </td>
+                <td>
+                  GHS
+                  {item.attributes.total_amount}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5">No line items found.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
+      <div className="d-flex justify-content-between align-items-center">
+        <Pagination
+          activePage={currentPage}
+          itemsCountPerPage={itemsPerPage}
+          totalItemsCount={pagination?.total_items || 0}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+          hideDisabled
+          hideNavigation={totalPages === 1}
+        />
+        <DropdownButton id="dropdown-items-per-page" title={`Items per page: ${itemsPerPage}`}>
+          <Dropdown.Item onClick={() => handleItemsPerPageChange(5)}>5</Dropdown.Item>
+          <Dropdown.Item onClick={() => handleItemsPerPageChange(10)}>10</Dropdown.Item>
+          <Dropdown.Item onClick={() => handleItemsPerPageChange(20)}>20</Dropdown.Item>
+        </DropdownButton>
+      </div>
     </div>
   );
 };

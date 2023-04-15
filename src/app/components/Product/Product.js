@@ -8,6 +8,7 @@ import { getProducts } from '../../redux/reducers/inventorySlice';
 import Customer from '../Customer/Customer';
 import Order from '../Order/Order';
 import OrderLineItem from '../OrderLineItem/OrderLineItem';
+import ProductSearch from '../ProductSearch';
 
 const Product = () => {
   const { products } = useSelector((state) => state.inventory);
@@ -28,7 +29,6 @@ const Product = () => {
     setStartOrder(true);
     setOrderStatus('pending');
     setTrigger((trigger) => trigger + 1);
-    console.log('store and prod and catId Ids', id, prodId, catId);
   };
 
   const params = {
@@ -45,10 +45,12 @@ const Product = () => {
     console.log('BUTTON_STATUS =>', btnStatus);
   };
   return (
-    <div className="container-fluid">
-      <Row>
+    <div className="container">
+      <Row className="pt-5 mt-5">
         <Col md={8}>
           <h1>Products</h1>
+          <hr />
+          <ProductSearch storeId={storeId} />
           <hr />
         </Col>
         <Col md={4}>
@@ -64,7 +66,7 @@ const Product = () => {
                 <Card>
                   <Card.Img variant="top" src={product.image} />
                   <Card.Body>
-                    <Card.Title>{product.name}</Card.Title>
+                    <Card.Title>{product.product_name}</Card.Title>
                     <Card.Text>{product.description}</Card.Text>
                     <Card.Text>
                       $

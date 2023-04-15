@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addProduct, getProducts } from '../../redux/reducers/inventorySlice';
 import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
+import ProductSearch from '../ProductSearch';
 
 const Inventory = () => {
   // localStorage.clear();
@@ -169,9 +170,10 @@ const Inventory = () => {
 
   return (
     <Container>
-      <Row>
+      <Row className="pt-5 mt-5">
         <Col sm={3}>
           <h3>Add Product</h3>
+          <hr />
           <Form onSubmit={handleAddProduct}>
             <Form.Group>
               <Form.Label>Shops/Stores</Form.Label>
@@ -299,6 +301,9 @@ const Inventory = () => {
         </Col>
         <Col sm={9}>
           <h3>Inventory</h3>
+          <hr />
+          <ProductSearch storeId={storeId} />
+          <hr />
           {products.length === 0 ? (
             <Alert variant="info">No products added</Alert>
           ) : (
