@@ -172,7 +172,7 @@ const Inventory = () => {
     <Container>
       <Row className="pt-5 mt-5">
         <Col sm={3}>
-          <h3>Add Product</h3>
+          <h1>Add Product</h1>
           <hr />
           <Form onSubmit={handleAddProduct}>
             <Form.Group>
@@ -234,7 +234,7 @@ const Inventory = () => {
               <Form.Control as="select" name="country" value={country} onChange={handleChange}>
                 <option value="">-- Select Country --</option>
                 {countryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option key={option.value} value={option.label}>
                     {option.label}
                   </option>
                 ))}
@@ -300,9 +300,9 @@ const Inventory = () => {
           )}
         </Col>
         <Col sm={9}>
-          <h3>Inventory</h3>
+          <h1>Inventory</h1>
           <hr />
-          <ProductSearch storeId={storeId} />
+          <ProductSearch outlets={outlets} />
           <hr />
           {products.length === 0 ? (
             <Alert variant="info">No products added</Alert>

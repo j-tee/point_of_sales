@@ -9,10 +9,11 @@ import Customer from '../Customer/Customer';
 import Order from '../Order/Order';
 import OrderLineItem from '../OrderLineItem/OrderLineItem';
 import ProductSearch from '../ProductSearch';
+import { getShops } from '../../redux/reducers/shopSlice';
 
 const Product = () => {
   const { products } = useSelector((state) => state.inventory);
-  // const [customerId, setCustomerId] = useState(null);
+  const { outlets } = useSelector((state) => state.shop);
   const [storeId, setStoreId] = useState(0);
   const [productId, setProductId] = useState(0);
   const [categoryId, setCategoryId] = useState(0);
@@ -38,6 +39,8 @@ const Product = () => {
   };
   useEffect(() => {
     dispatch(getProducts(params));
+    const user = localStorage.getItem('user');
+    dispatch(getShops(user.id));
   }, []);
 
   const setAddToCartButtonStatus = (status) => {
@@ -48,18 +51,14 @@ const Product = () => {
     <div className="container">
       <Row className="pt-5 mt-5">
         <Col md={8}>
-          <h1>Products</h1>
-          <hr />
-          <ProductSearch storeId={storeId} />
-          <hr />
-        </Col>
-        <Col md={4}>
-          <h1>Orders</h1>
-          <hr />
-        </Col>
-      </Row>
-      <Row>
-        <Col md={8}>
+          <Row>
+            <h1>Products</h1>
+            <hr />
+          </Row>
+          <Row>
+            <ProductSearch outlets={outlets} />
+            <hr />
+          </Row>
           <Row>
             {products.map((product) => (
               <div className="col-md-4 mb-4" key={product.id}>
@@ -96,6 +95,10 @@ const Product = () => {
           </Row>
         </Col>
         <Col md={4}>
+          <Row>
+            <h1>Orders</h1>
+            <hr />
+          </Row>
           <Row>
             <Customer setAddToCartButtonStatus={setAddToCartButtonStatus} />
           </Row>

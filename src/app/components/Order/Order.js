@@ -15,17 +15,6 @@ const Order = ({ storeId, trigger }) => {
   // const [orderObject, setOrderObject] = useState({});
   const [params, setParams] = useState({});
 
-  console.log('storeId in Order:', storeId);
-  console.log('customerId in Order:', customer.id);
-
-  // useEffect(() => {
-  //   setOrderObject({
-  //     customer_id: customer.id,
-  //     store_id: storeId,
-  //     status: 'pending',
-  //   });
-  // }, [storeId, customer.id]);
-
   useEffect(() => {
     setParams({
       store_id: storeId,

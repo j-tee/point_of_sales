@@ -74,7 +74,7 @@ const Customer = ({ setAddToCartButtonStatus }) => {
     setInitialLoad(true);
   };
   return (
-    <div className="p-3">
+    <div>
       <Row className="pe-3 ps-3">
         {Object.keys(customer).length === 0 ? <Button variant="success" onClick={startTransaction}>Start Transaction</Button>
           : <Button variant="danger" onClick={completeTransaction}>Close Transaction</Button>}
