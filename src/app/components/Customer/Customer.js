@@ -1,16 +1,18 @@
 /* eslint-disable max-len */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Form, FormGroup, FormLabel, FormControl, Row,
 } from 'react-bootstrap';
 import Casual from 'casual-browserify';
-import { addCustomer, resetCustomer, updateCustomer } from '../../redux/reducers/customerSlice';
+import {
+  addCustomer, getCustomer, getCustomers, resetCustomer,
+} from '../../redux/reducers/customerSlice';
 
-const Customer = ({ setAddToCartButtonStatus }) => {
-  const { customer } = useSelector((state) => state.customer) || {};
+const Customer = ({ setAddToCartButtonStatus, storeId }) => {
+  const { customer, customers } = useSelector((state) => state.customer) || {};
   // const [customerId, setCustomerId] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,6 +20,7 @@ const Customer = ({ setAddToCartButtonStatus }) => {
   const [address, setAddress] = useState('');
   const [initialLoad, setInitialLoad] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
+  const [customerId, setCustomerId] = useState(0);
   const dispatch = useDispatch();
 
   // console.log('New storeId from customer:=>', storeId);
@@ -27,13 +30,11 @@ const Customer = ({ setAddToCartButtonStatus }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isChecked) {
-      customer.name = name;
-      customer.email = email;
-      customer.phone = phone;
-      customer.address = address;
-      dispatch(updateCustomer({
-        id: customer.id, name, email, phone, address,
-      }));
+      const customer = {
+        name, email, phone, store_id: storeId, address,
+      };
+      dispatch(addCustomer(customer))
+        .then(() => (dispatch(getCustomers(storeId))));
     }
     setName('');
     setEmail('');
@@ -43,6 +44,10 @@ const Customer = ({ setAddToCartButtonStatus }) => {
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
+    setName('');
+    setEmail('');
+    setPhone('');
+    setAddress('');
   };
   const startTransaction = () => {
     if (!isChecked && initialLoad) {
@@ -52,6 +57,7 @@ const Customer = ({ setAddToCartButtonStatus }) => {
         email: Casual.email,
         phone: Casual.phone,
         address: `${Casual.address} ${Casual.city}, ${Casual.state_abbr} ${Casual.zip}`,
+        store_id: storeId,
       };
       dispatch(addCustomer(customerObject));
       setInitialLoad(false);
@@ -62,6 +68,24 @@ const Customer = ({ setAddToCartButtonStatus }) => {
     dispatch(resetCustomer());
     setInitialLoad(true);
   };
+
+  const handleCustomerChange = (event) => {
+    setAddToCartButtonStatus(false);
+    const { value } = event.target;
+    setCustomerId(value);
+    dispatch(getCustomer(parseInt(value, 10)))
+      .then((res) => {
+        // console.log('CUSTOMER ===========================>', res.payload);
+        setName(res.payload.name);
+        setAddress(res.payload.address);
+        setPhone(res.payload.phone);
+        setEmail(res.payload.email);
+      });
+  };
+
+  useEffect(() => {
+    dispatch(getCustomers(storeId));
+  }, [dispatch, storeId]);
   return (
     <div>
       <Row className="pe-3 ps-3">
@@ -82,6 +106,16 @@ const Customer = ({ setAddToCartButtonStatus }) => {
       <Row>
         {isChecked ? (
           <Form onSubmit={handleSubmit}>
+            <Form.Group>
+              <Form.Control as="select" value={customerId} name="customer_id" onChange={handleCustomerChange}>
+                <option value="">---select customer---</option>
+                {customers.map((cust) => (
+                  <option key={cust.id} value={cust.id}>
+                    {cust.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
             <FormGroup>
               <FormLabel>Name</FormLabel>
               <FormControl

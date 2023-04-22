@@ -11,6 +11,7 @@ import { addOrder, getOrders } from '../../redux/reducers/orderSlice';
 const Order = ({ stockId, trigger }) => {
   const { order } = useSelector((state) => state.order);
   const { customer } = useSelector((state) => state.customer) || {};
+
   const dispatch = useDispatch();
   // const [orderObject, setOrderObject] = useState({});
   const [params, setParams] = useState({});

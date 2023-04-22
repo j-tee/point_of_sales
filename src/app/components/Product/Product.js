@@ -291,7 +291,7 @@ const Product = () => {
             <hr />
           </Row>
           <Row>
-            <Customer setAddToCartButtonStatus={setAddToCartButtonStatus} />
+            <Customer setAddToCartButtonStatus={setAddToCartButtonStatus} storeId={storeId} />
           </Row>
           <Row>
             <Order trigger={trigger} stockId={stockId} productId={productId} categoryId={categoryId} startOrder={startOrder} orderStatus={orderStatus} />
