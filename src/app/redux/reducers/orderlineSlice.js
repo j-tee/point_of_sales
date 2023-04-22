@@ -19,7 +19,6 @@ export const getOrderLineItems = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await OrderLineService.getOrderLineItems(params.orderId, params.customerId, params.productId, params.page, params.perPage);
-      console.log('=================reponse.data=================', response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

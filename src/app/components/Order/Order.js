@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { addOrder, getOrders } from '../../redux/reducers/orderSlice';
 
-const Order = ({ storeId, trigger }) => {
+const Order = ({ stockId, trigger }) => {
   const { order } = useSelector((state) => state.order);
   const { customer } = useSelector((state) => state.customer) || {};
   const dispatch = useDispatch();
@@ -17,12 +17,12 @@ const Order = ({ storeId, trigger }) => {
 
   useEffect(() => {
     setParams({
-      store_id: storeId,
+      stock_id: stockId,
       customer_id: customer.id,
       status: 'pending',
       employee_id: 0,
     });
-  }, [storeId, customer.id]);
+  }, [stockId, customer.id]);
 
   const dispatchAddOrder = useCallback(() => {
     dispatch(addOrder(params));
@@ -50,7 +50,7 @@ const Order = ({ storeId, trigger }) => {
 };
 
 Order.propTypes = {
-  storeId: PropTypes.number.isRequired,
+  stockId: PropTypes.number.isRequired,
   trigger: PropTypes.number.isRequired,
 };
 

@@ -40,16 +40,6 @@ const Customer = ({ setAddToCartButtonStatus }) => {
     setPhone('');
     setAddress('');
   };
-  // const handleCustomerAdded = (addedCustomer) => {
-  //   // console.log('addedCustomer=>handleCustomerAdded', addedCustomer.payload.id);
-  //   setCustomerId(addedCustomer.payload.id);
-  //   console.log('customerId from handleCustomerAdded =>', customerId);
-  // };
-
-  // useEffect(() => {
-  //   console.log('useEffect called with CUSTOMER=>', customer);
-
-  // }, [isChecked, initialLoad, onCustomerAdded, customer, dispatch]);
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -57,7 +47,6 @@ const Customer = ({ setAddToCartButtonStatus }) => {
   const startTransaction = () => {
     if (!isChecked && initialLoad) {
       setAddToCartButtonStatus(false);
-      console.log('Start Transaction', initialLoad, isChecked);
       const customerObject = {
         name: `${Casual.first_name} ${Casual.last_name}`,
         email: Casual.email,
@@ -78,7 +67,6 @@ const Customer = ({ setAddToCartButtonStatus }) => {
       <Row className="pe-3 ps-3">
         {Object.keys(customer).length === 0 ? <Button variant="success" onClick={startTransaction}>Start Transaction</Button>
           : <Button variant="danger" onClick={completeTransaction}>Close Transaction</Button>}
-
       </Row>
       <Row className="pe-3 ps-3 pt-2">
         <Form>

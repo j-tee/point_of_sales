@@ -25,7 +25,8 @@ const Shop = () => {
   const handleCreateShop = async (e) => {
     e.preventDefault();
     try {
-      dispatch(registerShop({ store: { name, address } }));
+      dispatch(registerShop({ store: { name, address } }))
+        .then(() => (dispatch(getShops(user.id))));
       setName('');
       setAddress('');
     } catch (error) {

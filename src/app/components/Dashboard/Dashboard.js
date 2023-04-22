@@ -40,7 +40,7 @@ const renderCustomizedLabel = ({
 };
 
 const Dashboard = () => {
-  const { shops } = useSelector((state) => state.shop) ?? {};
+  const { shops } = useSelector((state) => state.shop);
   return (
     <>
       {

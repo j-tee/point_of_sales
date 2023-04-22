@@ -14,3 +14,28 @@ code {
 .menu-font {
   font-size: 0.8rem;
 }
+
+/* Example CSS styles for making Pagination mobile-friendly */
+
+/* Reduce font size for small screens */
+@media (max-width: 576px) {
+  .pagination {
+    font-size: 0.8rem;
+  }
+}
+
+/* Adjust spacing for small screens */
+@media (max-width: 576px) {
+  .pagination .page-item:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+}
+
+/* Hide pagination navigation for small screens */
+@media (max-width: 576px) {
+  .pagination .page-item:first-child,
+  .pagination .page-item:last-child {
+    display: none;
+  }
+}
+

@@ -5,6 +5,7 @@ import ShopService from '../../services/data/shopService';
 const initialState = {
   outlets: [],
   message: '',
+  shop: {},
   isLoading: false,
 };
 
@@ -84,7 +85,7 @@ export const shopSlice = createSlice({
     builder
       .addCase(getShops.rejected, (state, action) => ({ ...state, isLoading: false, message: action.payload }));
     builder
-      .addCase(registerShop.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+      .addCase(registerShop.fulfilled, (state, action) => ({ ...state, shop: action.payload, isLoading: false }));
     builder
       .addCase(registerShop.pending, (state) => ({ ...state, isLoading: true }));
     builder
