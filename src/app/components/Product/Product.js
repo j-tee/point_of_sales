@@ -117,7 +117,7 @@ const Product = () => {
     // setInitLoad(false);
     const { value } = event.target;
     setStoreId(parseInt(value, 10));
-    dispatch(getStocks(storeId));
+    dispatch(getStocks(value));
     setParams((prevParams) => ({
       ...prevParams,
       storeId: parseInt(value, 10),

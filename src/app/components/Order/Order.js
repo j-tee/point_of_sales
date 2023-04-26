@@ -43,7 +43,7 @@ const Order = ({ stockId, trigger }) => {
 
   return (
     <>
-      <h4>
+      <h4 className="text-muted">
         {`Order ID: ${order.id ? order.id : 'XXXX'} Customer ID:${customer.id ? customer.id : 'XXXX'}`}
       </h4>
     </>

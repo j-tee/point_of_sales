@@ -9,6 +9,7 @@ import inventoryReducer from './reducers/inventorySlice';
 import orderReducer from './reducers/orderSlice';
 import customerReducer from './reducers/customerSlice';
 import orderlineReducer from './reducers/orderlineSlice';
+import paymentReducer from './reducers/paymentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,5 +22,6 @@ export const store = configureStore({
     inventory: inventoryReducer,
     order: orderReducer,
     customer: customerReducer,
+    payment: paymentReducer,
   },
 });

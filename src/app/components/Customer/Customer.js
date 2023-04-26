@@ -111,6 +111,8 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
                 <option value="">---select customer---</option>
                 {customers.map((cust) => (
                   <option key={cust.id} value={cust.id}>
+                    {cust.id}
+                    {' '}
                     {cust.name}
                   </option>
                 ))}

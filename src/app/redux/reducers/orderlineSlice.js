@@ -81,14 +81,14 @@ const OrderlineSlice = createSlice({
       .addCase(getOrderLineItems.rejected, (state) => ({ ...state, isLoading: false, message: 'Failed to retrieve data from database' }));
     builder
       .addCase(getOrderLineItem.fulfilled, (state, action) => ({
-        ...state, lineItems: action.payload, isLoading: false, message: 'Items fetched successfully',
+        ...state, lineItem: action.payload, isLoading: false, message: 'Items fetched successfully',
       }));
     builder.addCase(getOrderLineItem.pending, (state) => ({ ...state, isLoading: true, message: 'Loading data' }));
     builder
       .addCase(getOrderLineItem.rejected, (state) => ({ ...state, isLoading: false, message: 'Failed to retrieve data from database' }));
     builder
       .addCase(updateOrderLineItem.fulfilled, (state, action) => ({
-        ...state, lineItems: action.payload, isLoading: false, message: 'Items updated successfully',
+        ...state, lineItem: action.payload, isLoading: false, message: 'Items updated successfully',
       }));
     builder.addCase(updateOrderLineItem.pending, (state) => ({ ...state, isLoading: true, message: 'Loading data' }));
     builder

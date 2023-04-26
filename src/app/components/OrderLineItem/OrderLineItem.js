@@ -11,10 +11,12 @@ import {
 import {
   addOrderLineItem, getOrderLineItem, getOrderLineItems, updateOrderLineItem,
 } from '../../redux/reducers/orderlineSlice';
+import Payment from '../payment';
 
 const OrderLineItem = ({ productId, trigger }) => {
   const { lineItems, pagination } = useSelector((state) => state.orderline);
   const { customer } = useSelector((state) => state.customer);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const { order } = useSelector((state) => state.order) || {};
   const dispatch = useDispatch();
   const [lineItemUpdated, setlineItemUpdated] = useState(false);
@@ -22,6 +24,10 @@ const OrderLineItem = ({ productId, trigger }) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   // const [quantity, setQuantity] = useState(0);
+  const calculateModalPosition = () => {
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    return (window.innerHeight - navbarHeight) / 5;
+  };
 
   useEffect(() => {
     if (trigger && order?.id) {
@@ -72,13 +78,15 @@ const OrderLineItem = ({ productId, trigger }) => {
           });
       });
   };
+  const handleConfirmOrder = () => {
+    setPaymentModalOpen(true);
+  };
 
   return (
     <div className="p-3">
       <Table striped bordered hover variant="dark">
         <thead>
           <tr>
-            <th>TranID</th>
             <th>Product</th>
             <th>Quantity</th>
             <th>Unit Price</th>
@@ -89,7 +97,6 @@ const OrderLineItem = ({ productId, trigger }) => {
           {lineItems.length > 0 ? (
             lineItems.map((item) => (
               <tr key={item.attributes.id}>
-                <td>{item.attributes.id}</td>
                 <td>{item.attributes.product_name}</td>
                 <td>
                   <Button onClick={() => hanleQtyUpdate('decrease', item.attributes.quantity, item.attributes.id)} id={`${item.attributes.id}-decrease`} variant="transparent" className="text-white">
@@ -118,6 +125,9 @@ const OrderLineItem = ({ productId, trigger }) => {
         </tbody>
       </Table>
       <div className="d-flex justify-content-between align-items-center">
+        <Button onClick={handleConfirmOrder} className="mb-2" style={{ width: '100%' }}>Confirm Order</Button>
+      </div>
+      <div className="d-flex justify-content-between align-items-center">
         <Pagination
           activePage={currentPage}
           itemsCountPerPage={itemsPerPage}
@@ -133,6 +143,12 @@ const OrderLineItem = ({ productId, trigger }) => {
           <Dropdown.Item onClick={() => handleItemsPerPageChange(20)}>20</Dropdown.Item>
         </DropdownButton>
       </div>
+      <Payment
+        isOpen={paymentModalOpen}
+        onRequestClose={() => setPaymentModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setPaymentModalOpen={setPaymentModalOpen}
+      />
     </div>
   );
 };
