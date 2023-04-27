@@ -5,7 +5,7 @@ import authHeader from '../../helpers/authHeader';
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const TaxService = {
-  getTaxes: (storeId, orderId) => axios.get(`${API_URL}api/v1/taxes/getTaxes/${storeId}/${orderId}`, authHeader()),
+  getTaxes: (orderId) => axios.get(`${API_URL}api/v1/taxes/getTaxes/${orderId}`, authHeader()),
   getAllTaxes: (storeId) => axios.get(`${API_URL}api/v1/taxes/${storeId}`, authHeader()),
   addTax: (taxObject) => axios.post(`${API_URL}api/v1/taxes/registerStore`, taxObject, authHeader()),
   deleteTax: (id) => axios.delete(`${API_URL}api/v1/taxes/deleteShop/${id}`, authHeader()),

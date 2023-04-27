@@ -89,6 +89,7 @@ const OrderLineItem = ({ productId, trigger }) => {
           <tr>
             <th>Product</th>
             <th>Quantity</th>
+            <th>Total Tax</th>
             <th>Unit Price</th>
             <th>Total Cost</th>
           </tr>
@@ -106,6 +107,10 @@ const OrderLineItem = ({ productId, trigger }) => {
                   <Button id={`${item.attributes.id}-increase`} onClick={() => hanleQtyUpdate('increase', item.attributes.quantity, item.attributes.id)} variant="transparent" className="text-white">
                     +
                   </Button>
+                </td>
+                <td>
+                  GHS
+                  {item.attributes.total_tax}
                 </td>
                 <td>
                   GHS

@@ -3,9 +3,9 @@ import TaxService from '../../services/data/taxService';
 
 export const getTaxes = createAsyncThunk(
   'tax/getTaxes',
-  async (params, thunkAPI) => {
+  async (orderId, thunkAPI) => {
     try {
-      const response = await TaxService.getTaxes(params.storeId, params.orderId);
+      const response = await TaxService.getTaxes(orderId);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

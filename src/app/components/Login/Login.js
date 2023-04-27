@@ -46,7 +46,7 @@ const Login = (props) => {
         dispatch(loginUser(userData)).then(() => {
           setLoginModalOpen(false);
           const user = localStorage.getItem('user');
-          return <Navigate to={location.pathname} />;
+          navigate(location.pathname);
         }).catch((error) => {
           setError(error);
         });

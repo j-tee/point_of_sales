@@ -6,6 +6,7 @@ import {
   Col, Form, Modal, Row, Table,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { addPayment } from '../redux/reducers/paymentSlice';
 
 const Payment = (props) => {
@@ -20,6 +21,8 @@ const Payment = (props) => {
   const [paymentType, setPaymentType] = useState('cash');
   const [orderId, setOrderId] = useState(0);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -31,9 +34,12 @@ const Payment = (props) => {
   }, [isOpen, calculateModalPosition, lineItems]);
 
   const handlePaymentSubmit = (event) => {
-    const { value } = event.target;
-    console.log(value);
-    setPaymentModalOpen(false);
+    setSubmitted(true, () => { // Use callback function with setSubmitted
+      console.log('SUBMITTED handlePaymentSubmit ', submitted);
+      const { value } = event.target;
+      console.log(value);
+      setPaymentModalOpen(false);
+    });
   };
 
   const handleButtonClick = () => {
@@ -46,8 +52,14 @@ const Payment = (props) => {
   };
 
   useEffect(() => {
-    dispatch(addPayment(paymentObject));
-  }, [paymentObject, dispatch]);
+    console.log('SUBMITTED useEffect ', paymentObject);
+    if (Object.keys(paymentObject).length > 0) {
+      dispatch(addPayment(paymentObject))
+        .then(() => {
+          navigate(`/receipt/${orderId}`); // Fix template string
+        });
+    }
+  }, [paymentObject, dispatch, submitted, navigate, orderId]); // Include storeId and orderId in dependencies
 
   return (
     <Modal show={isOpen} onHide={onRequestClose} size="lg" style={{ marginTop: `${modalTop}px` }}>

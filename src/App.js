@@ -17,6 +17,7 @@ import Support from './app/components/Support/Support';
 import About from './app/components/About/About';
 import Inventory from './app/components/Inventory/Inventory';
 import Employee from './app/components/Employee/Employee';
+import Receipt from './app/components/Receipt';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/support" element={<Support />} />
         <Route path="/about" element={<About />} />
         <Route path="/inventory" element={<Inventory />} />
+        <Route path="/receipt/:orderId" element={<Receipt />} />
       </Routes>
     </>
   );
