@@ -21,10 +21,10 @@ export const getEmployees = createAsyncThunk(
 );
 
 export const addEmployee = createAsyncThunk(
-  'employee/getEmployees',
+  'employee/addEmployee',
   async (employee, thunkAPI) => {
     try {
-      const response = await EmployeeService.addEmployees(employee);
+      const response = await EmployeeService.addEmployee(employee);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -70,7 +70,9 @@ export const employeeSlice = createSlice({
     builder
       .addCase(getEmployees.rejected, (state, action) => ({ ...state, isLoading: false, message: action.payload }));
     builder
-      .addCase(addEmployee.fulfilled, (state, action) => ({ ...state, isLoading: false, message: action.payload }));
+      .addCase(addEmployee.fulfilled, (state, action) => ({
+        ...state, isLoading: false, shop: action.payload, message: 'Employee added successfully!!!',
+      }));
     builder
       .addCase(addEmployee.pending, (state) => ({ ...state, isLoading: true }));
     builder
