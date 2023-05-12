@@ -18,6 +18,18 @@ const initialState = {
   isLoggedIn: false, isSuccessful: false, user: null, message: '',
 };
 
+export const resetMessage = createAsyncThunk(
+  'auth/resetMessage',
+  async (_, thunkAPI) => {
+    try {
+      const response = await AuthService.resetMessage();
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, thunkAPI) => {
@@ -68,9 +80,17 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.isLoggedIn = false;
-        state.user = null;
+      .addCase(resetMessage.fulfilled, (state) => {
+        state.message = undefined;
+        state.isSuccessful = false;
+      })
+      .addCase(resetMessage.rejected, (state) => {
+        state.message = undefined;
+        state.isSuccessful = false;
+      })
+      .addCase(resetMessage.pending, (state) => {
+        state.message = undefined;
+        state.isSuccessful = false;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.isLoggedIn = true;

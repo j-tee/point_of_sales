@@ -1,9 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Route, Routes } from 'react-router-dom';
 import NavMenu from './app/components/NavMenu/NavMenu';
 import Home from './app/components/Home/Home';
 import Dashboard from './app/components/Dashboard/Dashboard';
@@ -18,12 +17,14 @@ import About from './app/components/About/About';
 import Inventory from './app/components/Inventory/Inventory';
 import Employee from './app/components/Employee/Employee';
 import Receipt from './app/components/Receipt';
+import Toast from './app/components/Toastify';
+import { ToastProvider } from './app/components/ToastContext';
 
 function App() {
   return (
-    <>
+    <ToastProvider>
       <NavMenu />
-      <ToastContainer position="top-center" theme="colored" />
+      <Toast />
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -39,7 +40,7 @@ function App() {
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/receipt/:orderId" element={<Receipt />} />
       </Routes>
-    </>
+    </ToastProvider>
   );
 }
 

@@ -26,6 +26,8 @@ const AuthService = () => {
       return response.data;
     });
 
+  const resetMessage = () => undefined;
+
   const logout = () => axios.delete(`${API_URL}logout`, {
     headers: authHeader,
   })
@@ -48,6 +50,7 @@ const AuthService = () => {
     login,
     logout,
     register,
+    resetMessage,
   };
 };
 

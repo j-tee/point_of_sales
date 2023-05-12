@@ -1,12 +1,14 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  Modal, Form, Button, Alert,
+  Modal, Form, Button,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../../redux/reducers/authSlice';
+import { registerUser, resetMessage } from '../../redux/reducers/authSlice';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const Register = (props) => {
   const {
@@ -18,6 +20,7 @@ const Register = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { showToast, setShowToast } = useContext(ToastContext);
   const [error, setError] = useState('');
   const [modalTop, setModalTop] = useState(0);
   const dispatch = useDispatch();
@@ -33,7 +36,7 @@ const Register = (props) => {
     event.stopPropagation();
     if (form.checkValidity() === true) {
       if (password !== confirmPassword) {
-        setError('Passwords do not match');
+        showToast('Password mismatch', 'error');
       } else {
         const userData = {
           username: name,
@@ -42,15 +45,24 @@ const Register = (props) => {
           password_confirmation: confirmPassword,
         };
         dispatch(registerUser(userData)).then(() => {
+          setShowToast(true);
+          // showToast(message, isSuccessful ? 'sucess' : 'danger');
           setRegisterModalOpen(false);
         }).catch((error) => {
           setError(error);
-          console.error('An error occurred:', error);
+          showToast(error.message, 'error');
         });
       }
     }
     setValidated(true);
   };
+  useEffect(() => {
+    if (message !== undefined && message !== null && isSuccessful === true) {
+      showToastify(message, isSuccessful ? 'success' : 'danger');
+      setRegisterModalOpen(false);
+      dispatch(resetMessage());
+    }
+  }, [message, isSuccessful, setRegisterModalOpen, setShowToast, dispatch]);
 
   return (
     <Modal show={isOpen} onHide={onRequestClose} size="lg" style={{ marginTop: `${modalTop}px` }}>
@@ -93,11 +105,6 @@ const Register = (props) => {
           </Form.Group>
 
           <Modal.Footer>
-            <Alert show={(message !== '')} dismissible variant={isSuccessful ? 'sucess' : 'danger'}>
-              <p>
-                {message}
-              </p>
-            </Alert>
             <Button variant="primary" type="submit">
               Register
             </Button>

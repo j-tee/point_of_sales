@@ -6,7 +6,10 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import { loginUser } from '../../redux/reducers/authSlice';
+import 'react-toastify/dist/ReactToastify.css';
+import { showToastify } from '../Toastify';
 
 const Login = (props) => {
   const {
@@ -35,7 +38,9 @@ const Login = (props) => {
     event.stopPropagation();
     if (form.checkValidity() === true) {
       if (password !== confirmPassword) {
-        setError('Passwords do not match');
+        // setError();
+        showToastify('Password mismatch', 'error');
+        // toast.error('Passwords do not match');
       } else {
         // perform registration logic here
         const userData = {
@@ -45,10 +50,12 @@ const Login = (props) => {
 
         dispatch(loginUser(userData)).then(() => {
           setLoginModalOpen(false);
+          showToastify('Login successful!', 'success');
           const user = localStorage.getItem('user');
           navigate(location.pathname);
         }).catch((error) => {
-          setError(error);
+          // toast.error(error.message);
+          showToastify('error.message', 'error');
         });
       }
     }
@@ -56,7 +63,7 @@ const Login = (props) => {
   };
 
   return (
-    <Modal show={isOpen} onHide={onRequestClose} size="lg" style={{ marginTop: `${modalTop}px` }}>
+    <Modal show={isOpen} onHide={onRequestClose} size="sm" style={{ marginTop: `${modalTop}px` }}>
       <Modal.Header closeButton>
         <Modal.Title>Login</Modal.Title>
       </Modal.Header>
