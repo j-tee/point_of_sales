@@ -47,6 +47,10 @@ const Register = (props) => {
         dispatch(registerUser(userData)).then(() => {
           setShowToast(true);
           // showToast(message, isSuccessful ? 'sucess' : 'danger');
+          setEmail('');
+          setName('');
+          setPassword('');
+          setConfirmPassword('');
           setRegisterModalOpen(false);
         }).catch((error) => {
           setError(error);
