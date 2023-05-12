@@ -69,7 +69,7 @@ const Register = (props) => {
   }, [message, isSuccessful, setRegisterModalOpen, setShowToast, dispatch]);
 
   return (
-    <Modal show={isOpen} onHide={onRequestClose} size="lg" style={{ marginTop: `${modalTop}px` }}>
+    <Modal show={isOpen} onHide={onRequestClose} size="sm" style={{ marginTop: `${modalTop}px` }}>
       <Modal.Header closeButton>
         <Modal.Title>Register</Modal.Title>
       </Modal.Header>
