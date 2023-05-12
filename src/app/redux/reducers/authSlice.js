@@ -76,6 +76,8 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.isLoggedIn = false;
       state.user = null;
+      state.message = 'User logged out Successfully!!';
+      state.isSuccessful = true;
     },
   },
   extraReducers: (builder) => {
@@ -109,10 +111,14 @@ export const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoggedIn = true;
         state.user = action.payload;
+        state.message = 'User logged In Successfully!!';
+        state.isSuccessful = true;
       })
       .addCase(loginUser.rejected, (state) => {
         state.isLoggedIn = false;
         state.user = null;
+        state.message = 'User log in failure!!';
+        state.isSuccessful = false;
       })
       .addCase(logout, (state) => {
         state.isLoggedIn = false;

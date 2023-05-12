@@ -54,7 +54,7 @@ const Register = (props) => {
           setRegisterModalOpen(false);
         }).catch((error) => {
           setError(error);
-          showToast(error.message, 'error');
+          showToastify(error.message, 'error');
         });
       }
     }
