@@ -19,7 +19,7 @@ const AuthService = () => {
       if (response.headers.authorization) {
         localStorage.setItem('header', JSON.stringify(response.headers));
         const header = JSON.parse(localStorage.getItem('header'));
-        // console.log('authorization from authheader function=> ', authHeader);
+        console.log('headers information=> ', header);
         localStorage.setItem('user', JSON.stringify(response.data.data));
       }
 
@@ -29,7 +29,8 @@ const AuthService = () => {
   const resetMessage = () => undefined;
 
   const logout = () => axios.delete(`${API_URL}logout`, {
-    headers: authHeader,
+    headers: JSON.parse(localStorage.getItem('header')),
+    body: JSON.stringify({ user: JSON.parse(localStorage.getItem('user')) }),
   })
     .then((response) => {
       localStorage.removeItem('user');

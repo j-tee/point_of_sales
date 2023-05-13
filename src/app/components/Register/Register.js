@@ -31,6 +31,7 @@ const Register = (props) => {
   }, [isOpen, calculateModalPosition]);
 
   const handleSubmit = (event) => {
+    setShowToast(true);
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
@@ -45,7 +46,6 @@ const Register = (props) => {
           password_confirmation: confirmPassword,
         };
         dispatch(registerUser(userData)).then(() => {
-          setShowToast(true);
           // showToast(message, isSuccessful ? 'sucess' : 'danger');
           setEmail('');
           setName('');

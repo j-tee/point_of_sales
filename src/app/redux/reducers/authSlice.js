@@ -48,6 +48,8 @@ export const logoutUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       // API call to logout user
+      const headers = JSON.parse(localStorage.getItem('headers'));
+      console.log('HEADERS=====>', headers);
       const response = await AuthService.logout();
       return response.data;
     } catch (error) {
@@ -62,6 +64,7 @@ export const loginUser = createAsyncThunk(
     try {
       // API call to login user
       const response = await AuthService.login(userData.email, userData.password);
+      console.log('reponse from slice', response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -72,14 +75,7 @@ export const loginUser = createAsyncThunk(
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {
-    logout: (state) => {
-      state.isLoggedIn = false;
-      state.user = null;
-      state.message = 'User logged out Successfully!!';
-      state.isSuccessful = true;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(resetMessage.fulfilled, (state) => {
@@ -94,11 +90,21 @@ export const authSlice = createSlice({
         state.message = undefined;
         state.isSuccessful = false;
       })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.message = 'User logged out Successfully!!';
+        state.isSuccessful = true;
+      })
       .addCase(logoutUser.rejected, (state) => {
         state.isLoggedIn = true;
+        state.message = 'User logged out Failure!!';
+        state.isSuccessful = false;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isLoggedIn = true;
+        state.message = 'User log out pending!!';
+        state.isSuccessful = false;
       })
       .addCase(registerUser.fulfilled, (state) => {
         state.message = 'User successfully registered!!';
@@ -119,10 +125,6 @@ export const authSlice = createSlice({
         state.user = null;
         state.message = 'User log in failure!!';
         state.isSuccessful = false;
-      })
-      .addCase(logout, (state) => {
-        state.isLoggedIn = false;
-        state.user = null;
       });
   },
 });

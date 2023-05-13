@@ -2,14 +2,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { loginUser } from '../../redux/reducers/authSlice';
+import { loginUser, resetMessage } from '../../redux/reducers/authSlice';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToastify } from '../Toastify';
+import ToastContext from '../ToastContext';
 
 const Login = (props) => {
   const {
@@ -18,6 +19,7 @@ const Login = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { showToast, setShowToast } = useContext(ToastContext);
   const [validated, setValidated] = useState(false);
   const [error, setError] = useState('');
   const [modalTop, setModalTop] = useState(0);
@@ -32,6 +34,7 @@ const Login = (props) => {
   }, [isOpen, calculateModalPosition]);
 
   const handleSubmit = (event) => {
+    setShowToast(true);
     event.preventDefault();
     const form = event.currentTarget;
     // add validation logic here
@@ -48,16 +51,23 @@ const Login = (props) => {
           password,
         };
 
-        dispatch(loginUser(userData)).then(() => {
-          setLoginModalOpen(false);
-          showToastify('Login successful!', 'success');
-          const user = localStorage.getItem('user');
-          navigate(location.pathname);
+        dispatch(loginUser(userData)).then((response) => {
+          console.log('response ====>', response);
+          if (response.error) {
+            showToastify(`Login failure!! ${response.payload}`, 'error');
+          } else {
+            setLoginModalOpen(false);
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+          }
         }).catch((error) => {
-          // toast.error(error.message);
-          showToastify('error.message', 'error');
+          console.log('error message catch', error.message);
+          setShowToast(true);
+          showToastify(error.message, 'error');
         });
       }
+      dispatch(resetMessage());
     }
     setValidated(true);
   };

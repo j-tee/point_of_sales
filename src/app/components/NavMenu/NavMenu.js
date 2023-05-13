@@ -1,21 +1,31 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { createContext, useState } from 'react';
+import React, {
+  createContext, useContext, useEffect, useState,
+} from 'react';
 import {
   Container, Nav, NavDropdown, Navbar,
 } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Register from '../Register/Register';
 import Login from '../Login/Login';
 import ShoppingCartIcon from '../ShoppingCartIcon';
+import { logoutUser } from '../../redux/reducers/authSlice';
+import { showToastify } from '../Toastify';
+import ToastContext from '../ToastContext';
 
 const CartContext = createContext();
 
 const NavMenu = () => {
-  const { user } = useSelector((state) => state.auth) ?? {};
+  const [user, setUser] = useState();
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [cart, setCart] = useState([]);
+  const dispatch = useDispatch();
+  const { showToast, setShowToast } = useContext(ToastContext);
+
   const calculateModalPosition = () => {
     const navbarHeight = document.querySelector('.navbar').offsetHeight;
     return (window.innerHeight - navbarHeight) / 5;
@@ -23,9 +33,26 @@ const NavMenu = () => {
   const handleRegisterClick = () => {
     setRegisterModalOpen(true);
   };
+  const handleLogoutClick = () => {
+    dispatch(logoutUser()).then((response) => {
+      if (response.error) {
+        showToastify(response.payload, 'error');
+      } else {
+        setShowToast(true);
+        // showToastify('You have been successfully logged out', 'success');
+        setUser('');
+      }
+    });
+  };
   const handleLoginClick = () => {
     setLoginModalOpen(true);
   };
+  useEffect(() => {
+    // localStorage.clear();
+    if (!user) {
+      setUser(JSON.parse(localStorage.getItem('user')));
+    }
+  }, [user, setUser]);
   return (
     <div>
       <Navbar bg="primary" expand="lg">
@@ -54,12 +81,12 @@ const NavMenu = () => {
               </Nav.Link>
             </Nav>
             <Nav>
-              <NavDropdown bg="primary" title={user ? `Welcome ${user.username}` : 'User'} id="basic-nav-dropdown" className="pe-5 me-5">
+              <NavDropdown bg="primary" title={(user !== undefined) && (user) ? `Welcome ${user.username}` : 'User'} id="basic-nav-dropdown" className="pe-5 me-5">
                 {user ? (
                   <>
                     <Nav.Link to="/profile">Your Profile</Nav.Link>
                     <NavDropdown.Divider />
-                    <Nav.Link to="/logout">Logout</Nav.Link>
+                    <Nav.Link onClick={() => handleLogoutClick()}>Logout</Nav.Link>
                   </>
                 ) : (
                   <>
