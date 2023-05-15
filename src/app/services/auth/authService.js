@@ -7,6 +7,13 @@ import authHeader from '../../helpers/authHeader';
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const AuthService = () => {
+  const getCurrentUser = () => axios.get(`${API_URL}current_user`,
+    {
+      headers: JSON.parse(localStorage.getItem('header')),
+    }).then((response) => {
+    localStorage.setItem('user', JSON.stringify(response.data.data));
+  });
+
   const login = (email, password) => axios
     .post(`${API_URL}login`,
       {
@@ -35,7 +42,7 @@ const AuthService = () => {
     .then((response) => {
       localStorage.removeItem('user');
       localStorage.removeItem('header');
-      return response.data;
+      return response;
     });
 
   const register = (username, email, password) => axios.post(`${API_URL}signup`,
@@ -52,6 +59,7 @@ const AuthService = () => {
     logout,
     register,
     resetMessage,
+    getCurrentUser,
   };
 };
 

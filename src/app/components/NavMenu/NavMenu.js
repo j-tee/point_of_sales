@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, {
   createContext, useContext, useEffect, useState,
@@ -7,39 +5,52 @@ import React, {
 import {
   Container, Nav, NavDropdown, Navbar,
 } from 'react-bootstrap';
-// import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  Github, Linkedin, Twitter,
+} from 'react-bootstrap-icons';
 import Register from '../Register/Register';
 import Login from '../Login/Login';
 import ShoppingCartIcon from '../ShoppingCartIcon';
 import { logoutUser } from '../../redux/reducers/authSlice';
-import { showToastify } from '../Toastify';
 import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
+import UserProfile from '../UserProfile';
 
 const CartContext = createContext();
 
 const NavMenu = () => {
+  const { isLoggedIn, message } = useSelector((state) => state.auth);
   const [user, setUser] = useState();
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const { showToast, setShowToast } = useContext(ToastContext);
   const [cart, setCart] = useState([]);
   const dispatch = useDispatch();
-  const { showToast, setShowToast } = useContext(ToastContext);
 
   const calculateModalPosition = () => {
     const navbarHeight = document.querySelector('.navbar').offsetHeight;
     return (window.innerHeight - navbarHeight) / 5;
+  };
+  const handleUserProfileClick = () => {
+    setUserProfileModalOpen(true);
   };
   const handleRegisterClick = () => {
     setRegisterModalOpen(true);
   };
   const handleLogoutClick = () => {
     dispatch(logoutUser()).then((response) => {
+      setShowToast(true);
+      console.log('response from logout ======>', response);
       if (response.error) {
-        showToastify(response.payload, 'error');
+        console.log('checkout if block=====>', response.error.message);
+        localStorage.removeItem('user');
+        localStorage.removeItem('headers');
+        setUser('');
       } else {
-        setShowToast(true);
-        // showToastify('You have been successfully logged out', 'success');
+        showToastify('User logged out successfully', 'success');
         setUser('');
       }
     });
@@ -52,7 +63,10 @@ const NavMenu = () => {
     if (!user) {
       setUser(JSON.parse(localStorage.getItem('user')));
     }
-  }, [user, setUser]);
+    // if (!isLoggedIn) {
+    //   showToastify(message, 'success');
+    // }
+  }, [user, setUser, isLoggedIn, message]);
   return (
     <div>
       <Navbar bg="primary" expand="lg">
@@ -80,25 +94,41 @@ const NavMenu = () => {
                 </CartContext.Provider>
               </Nav.Link>
             </Nav>
-            <Nav>
-              <NavDropdown bg="primary" title={(user !== undefined) && (user) ? `Welcome ${user.username}` : 'User'} id="basic-nav-dropdown" className="pe-5 me-5">
-                {user ? (
-                  <>
-                    <Nav.Link to="/profile">Your Profile</Nav.Link>
-                    <NavDropdown.Divider />
-                    <Nav.Link onClick={() => handleLogoutClick()}>Logout</Nav.Link>
-                  </>
-                ) : (
-                  <>
-                    <Nav.Link onClick={() => handleLoginClick()}>Login</Nav.Link>
-                    <Nav.Link onClick={() => handleRegisterClick()}>Signup</Nav.Link>
-                  </>
-                )}
-              </NavDropdown>
-            </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <div className="sub-menu">
+        <span className="social">
+          <Linkedin className="linked-in" color="royalblue" size={16} />
+          &nbsp;
+          <Github color="royalblue" size={14} />
+          &nbsp;
+          <Twitter color="royalblue" size={16} />
+        </span>
+        <span>
+          <NavDropdown bg="primary" title={(user !== undefined) && (user) ? `Welcome ${user.username}` : 'Log In/Sign Up'} id="basic-nav-dropdown" className="pe-5 me-5">
+            {user ? (
+              <>
+                <Nav.Link onClick={() => handleUserProfileClick()}>Your Profile</Nav.Link>
+                <NavDropdown.Divider />
+                <Nav.Link onClick={() => handleLogoutClick()}>Logout</Nav.Link>
+              </>
+            ) : (
+              <>
+                <Nav.Link onClick={() => handleLoginClick()}>Login</Nav.Link>
+                <NavDropdown.Divider />
+                <Nav.Link onClick={() => handleRegisterClick()}>Signup</Nav.Link>
+              </>
+            )}
+          </NavDropdown>
+        </span>
+      </div>
+      <UserProfile
+        isOpen={userProfileModalOpen}
+        setUserProfileModalOpen={setUserProfileModalOpen}
+        onRequestClose={() => setUserProfileModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+      />
       <Register
         isOpen={registerModalOpen}
         setRegisterModalOpen={setRegisterModalOpen}

@@ -5,8 +5,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   Modal, Form, Button,
 } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerUser, resetMessage } from '../../redux/reducers/authSlice';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../redux/reducers/authSlice';
 import ToastContext from '../ToastContext';
 import { showToastify } from '../Toastify';
 
@@ -14,13 +14,12 @@ const Register = (props) => {
   const {
     isOpen, setRegisterModalOpen, onRequestClose, calculateModalPosition,
   } = props;
-  const { message, isSuccessful } = useSelector((state) => state.auth);
   const [validated, setValidated] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { showToast, setShowToast } = useContext(ToastContext);
+  const { setShowToast } = useContext(ToastContext);
   const [error, setError] = useState('');
   const [modalTop, setModalTop] = useState(0);
   const dispatch = useDispatch();
@@ -37,7 +36,7 @@ const Register = (props) => {
     event.stopPropagation();
     if (form.checkValidity() === true) {
       if (password !== confirmPassword) {
-        showToast('Password mismatch', 'error');
+        showToastify('Password mismatch', 'error');
       } else {
         const userData = {
           username: name,
@@ -60,13 +59,6 @@ const Register = (props) => {
     }
     setValidated(true);
   };
-  useEffect(() => {
-    if (message !== undefined && message !== null && isSuccessful === true) {
-      showToastify(message, isSuccessful ? 'success' : 'danger');
-      setRegisterModalOpen(false);
-      dispatch(resetMessage());
-    }
-  }, [message, isSuccessful, setRegisterModalOpen, setShowToast, dispatch]);
 
   return (
     <Modal show={isOpen} onHide={onRequestClose} size="sm" style={{ marginTop: `${modalTop}px` }}>

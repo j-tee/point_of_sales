@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import NavMenu from './app/components/NavMenu/NavMenu';
 import Home from './app/components/Home/Home';
 import Dashboard from './app/components/Dashboard/Dashboard';
@@ -17,10 +18,20 @@ import About from './app/components/About/About';
 import Inventory from './app/components/Inventory/Inventory';
 import Employee from './app/components/Employee/Employee';
 import Receipt from './app/components/Receipt';
-import Toast from './app/components/Toastify';
+import Toast, { showToastify } from './app/components/Toastify';
 import { ToastProvider } from './app/components/ToastContext';
+// import { resetMessage } from './app/redux/reducers/authSlice';
 
 function App() {
+  const { message, isSuccessful } = useSelector((state) => state.auth);
+  // const dispatch = useDispatch();
+  useEffect(() => {
+    if (message !== undefined && message !== null && isSuccessful === true) {
+      showToastify(message, isSuccessful ? 'success' : 'danger');
+      // setRegisterModalOpen(false);
+      // dispatch(resetMessage());
+    }
+  }, [message, isSuccessful]);
   return (
     <ToastProvider>
       <NavMenu />

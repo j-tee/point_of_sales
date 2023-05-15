@@ -11,6 +11,7 @@ import { loginUser, resetMessage } from '../../redux/reducers/authSlice';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToastify } from '../Toastify';
 import ToastContext from '../ToastContext';
+// import ValidateToken from '../../services/auth/validateToken';
 
 const Login = (props) => {
   const {
@@ -19,7 +20,7 @@ const Login = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { showToast, setShowToast } = useContext(ToastContext);
+  const { setShowToast } = useContext(ToastContext);
   const [validated, setValidated] = useState(false);
   const [error, setError] = useState('');
   const [modalTop, setModalTop] = useState(0);
@@ -52,6 +53,7 @@ const Login = (props) => {
         };
 
         dispatch(loginUser(userData)).then((response) => {
+          setShowToast(true);
           console.log('response ====>', response);
           if (response.error) {
             showToastify(`Login failure!! ${response.payload}`, 'error');
@@ -63,12 +65,14 @@ const Login = (props) => {
           }
         }).catch((error) => {
           console.log('error message catch', error.message);
-          setShowToast(true);
-          showToastify(error.message, 'error');
+          // setShowToast(true);
+          // showToastify(error.message, 'error');
         });
       }
-      dispatch(resetMessage());
     }
+    // dispatch(resetMessage()).then((response) => {
+    //   console.log('resetmessage called', response);
+    // });
     setValidated(true);
   };
 

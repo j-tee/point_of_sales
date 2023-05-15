@@ -15,7 +15,10 @@ import AuthService from '../../services/auth/authService';
 //   };
 
 const initialState = {
-  isLoggedIn: false, isSuccessful: false, user: null, message: '',
+  isLoggedIn: false,
+  isSuccessful: false,
+  user: null,
+  message: '',
 };
 
 export const resetMessage = createAsyncThunk(
@@ -23,7 +26,21 @@ export const resetMessage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await AuthService.resetMessage();
+      console.log('Message Reset=========>', response);
       return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getCurrentUser = createAsyncThunk(
+  'auth/getCurrentUser',
+  async (_, thunkAPI) => {
+    try {
+      // API call to register user
+      const response = await AuthService.getCurrentUser();
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -51,6 +68,7 @@ export const logoutUser = createAsyncThunk(
       const headers = JSON.parse(localStorage.getItem('headers'));
       console.log('HEADERS=====>', headers);
       const response = await AuthService.logout();
+      console.log('logoutUser response from AuthSlice=============> ', response.message);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -90,10 +108,10 @@ export const authSlice = createSlice({
         state.message = undefined;
         state.isSuccessful = false;
       })
-      .addCase(logoutUser.fulfilled, (state) => {
+      .addCase(logoutUser.fulfilled, (state, action) => {
         state.isLoggedIn = false;
         state.user = null;
-        state.message = 'User logged out Successfully!!';
+        state.message = action.message;
         state.isSuccessful = true;
       })
       .addCase(logoutUser.rejected, (state) => {
@@ -124,6 +142,30 @@ export const authSlice = createSlice({
         state.isLoggedIn = false;
         state.user = null;
         state.message = 'User log in failure!!';
+        state.isSuccessful = false;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.message = 'User log in pending';
+        state.isSuccessful = false;
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.isLoggedIn = true;
+        state.user = action.payload;
+        state.message = 'User Profile Retrieved Successfully';
+        state.isSuccessful = true;
+      })
+      .addCase(getCurrentUser.rejected, (state) => {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.message = 'User Profile Retrieval failed';
+        state.isSuccessful = false;
+      })
+      .addCase(getCurrentUser.pending, (state) => {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.message = 'User Profile Retrieval pending';
         state.isSuccessful = false;
       });
   },
