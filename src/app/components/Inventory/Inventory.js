@@ -11,7 +11,9 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProduct, getProducts, getStocks } from '../../redux/reducers/inventorySlice';
+import {
+  addProduct, addStock, getProducts, getStocks,
+} from '../../redux/reducers/inventorySlice';
 import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
 import PaginationComponent from '../Pagination';
@@ -27,7 +29,7 @@ const Inventory = () => {
   const [countryOptions, setCountryOptions] = useState([]);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [storeId, setStoreId] = useState(0);
-  const [stock, setStockId] = useState(0);
+  const [stockId, setStockId] = useState(0);
   const [productName, setProductName] = useState('');
   const [params, setParams] = useState({
     storeId: 0,
@@ -47,6 +49,7 @@ const Inventory = () => {
   const [mnfDate, setMnfDate] = useState();
   const [stockDate, setStockDate] = useState('');
   const dispatch = useDispatch();
+  const [newStock, setNewStock] = useState();
   const [newProduct, setNewProduct] = useState({
     store_id: '',
     product_name: '',
@@ -62,6 +65,7 @@ const Inventory = () => {
   });
 
   const [notifications, setNotifications] = useState([]);
+  const [trigger, setTrigger] = useState(false);
 
   const handleItemsPerPageChange = useCallback((newItemsPerPage) => {
     setItemsPerPage(newItemsPerPage);
@@ -178,6 +182,10 @@ const Inventory = () => {
       ...newProduct,
       [name]: value,
     });
+    setNewStock({
+      ...newStock, store_id: storeId,
+    });
+    console.log('newStock=====>', newStock);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -251,14 +259,37 @@ const Inventory = () => {
         console.error(error);
       });
   }, []);
+  const handleStoreIdChange = (e) => {
+    e.preventDefault();
+    setStoreId(e.target.value);
+    setNewStock({
+      ...newStock, store_id: e.target.value,
+    });
+    console.log('NEW STOCK=====>', newStock);
+  };
 
   const handleStockDateChange = (e) => {
     setStockDate(e.target.value);
+    setNewStock({
+      ...newStock, stock_date: e.target.value,
+    });
+    console.log('NEW STOCK FROM DATE =====>', newStock);
   };
 
-  const handleAddStock = () => {
-
+  const handleAddStock = (e) => {
+    e.preventDefault();
+    setTrigger(true);
   };
+
+  useEffect(() => {
+    if (trigger && (storeId > 0)) {
+      dispatch(addStock(newStock))
+        .then(() => {
+          setTrigger(false);
+          dispatch(getStocks(storeId));
+        });
+    }
+  }, [dispatch, newStock, trigger, storeId]);
 
   return (
     <Container>
@@ -271,7 +302,7 @@ const Inventory = () => {
           <Row>
             <Form onSubmit={handleAddProduct}>
               <Form.Group>
-                <Form.Control as="select" value={stock} name="stock" onChange={handleChange}>
+                <Form.Control as="select" value={stockId} name="stock" onChange={handleChange}>
                   <option value="">-- Select Stock --</option>
                   {stocks.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -408,7 +439,7 @@ const Inventory = () => {
                   <Row>
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Control as="select" name="store_id" value={storeId} onChange={handleChange} required>
+                        <Form.Control as="select" name="store_id" value={storeId} onChange={handleStoreIdChange} required>
                           <option value="">-- Select Store/Shop --</option>
                           {outlets.map((option) => (
                             <option key={option.id} value={option.id}>
@@ -426,7 +457,7 @@ const Inventory = () => {
                   </Row>
                 </Col>
                 <Col md={3}>
-                  <Button>New Stock Entry</Button>
+                  <Button type="submit">New Stock Entry</Button>
                 </Col>
               </Row>
             </Form>
