@@ -9,12 +9,15 @@ import {
 import ShopService from '../../services/data/shopService';
 
 const Shop = () => {
+  console.log('Calling shop ===> ');
   const dispatch = useDispatch();
   // localStorage.clear();
   const { outlets, message, isLoading } = useSelector((state) => state.shop) ?? {};
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const user = JSON.parse(localStorage.getItem('user'));
+
+  console.log('MESSAGE====>', message);
 
   useEffect(() => {
     if (user) {
@@ -58,7 +61,6 @@ const Shop = () => {
         <p>Loading...</p>
       ) : (
         <>
-          {message && <p>{message}</p>}
           <Form onSubmit={handleCreateShop}>
             <Row>
               <Col>

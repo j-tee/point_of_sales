@@ -435,7 +435,7 @@ const Inventory = () => {
                 <tr>
                   <th>Stock ID</th>
                   <th>Stock Date</th>
-                  <th>Stock Date</th>
+                  <th>&nbsp;</th>
                 </tr>
               </thead>
               <tbody>

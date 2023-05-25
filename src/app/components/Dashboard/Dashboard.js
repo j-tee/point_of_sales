@@ -137,7 +137,7 @@ const Dashboard = () => {
 
             </>
           )
-          : <Shop />
+          : (<Shop />)
       }
     </>
   );
