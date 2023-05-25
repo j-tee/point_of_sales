@@ -14,6 +14,23 @@ const AuthService = () => {
     localStorage.setItem('user', JSON.stringify(response.data.data));
   });
 
+  const resetPassword = (pwd) => axios.put(`${API_URL}password`,
+    {
+      user: {
+        password: pwd.password,
+        password_confirmation: pwd.password_confirmation,
+        reset_password_token: pwd.reset_password_token,
+      },
+    });
+
+  const requestPasswordReset = (email) => axios.post(`${API_URL}password`,
+    {
+      user:
+    {
+      email,
+    },
+    });
+
   const login = (email, password) => axios
     .post(`${API_URL}login`,
       {
@@ -60,6 +77,8 @@ const AuthService = () => {
     register,
     resetMessage,
     getCurrentUser,
+    requestPasswordReset,
+    resetPassword,
   };
 };
 

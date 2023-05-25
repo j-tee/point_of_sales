@@ -9,15 +9,12 @@ import {
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Home.module.css';
+import Header from '../Header';
 
 const Home = () => {
   const { user, isLoggedIn } = useSelector((state) => state.auth) ?? {};
   return (
     <div className={styles.app}>
-      <header className={styles.header}>
-        <h1>SALES FORGE</h1>
-        <p>The ultimate POS for small businesses</p>
-      </header>
       <Container>
         <h2>Features</h2>
         <Row>

@@ -90,15 +90,65 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+export const requestPasswordReset = createAsyncThunk(
+  'auth/requestPasswordReset',
+  async (email, thunkAPI) => {
+    try {
+      const response = await AuthService.requestPasswordReset(email);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async (pwd, thunkAPI) => {
+    try {
+      console.log('pwd=======>', pwd);
+      const response = await AuthService.resetPassword(pwd);
+      console.log('response==========.', response);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.isSuccessful = true;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(resetPassword.pending, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(requestPasswordReset.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.isSuccessful = true;
+      })
+      .addCase(requestPasswordReset.rejected, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(requestPasswordReset.pending, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
       .addCase(resetMessage.fulfilled, (state) => {
         state.message = undefined;
-        state.isSuccessful = false;
+        state.isSuccessful = true;
       })
       .addCase(resetMessage.rejected, (state) => {
         state.message = undefined;

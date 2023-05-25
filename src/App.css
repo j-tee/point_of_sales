@@ -12,6 +12,68 @@
     animation: App-logo-float infinite 3s ease-in-out;
   }
 }
+.App {
+  text-align: center;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #282c34;
+  min-height: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.header h1 {
+  margin-bottom: 0;
+}
+
+.header p {
+  font-size: 1.5rem;
+  margin-top: 0;
+}
+
+.feature {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  height: 100%;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.feature:hover {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.feature h3 {
+  margin-top: 20px;
+}
+
+.testimonial {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  height: 100%;
+}
+
+.testimonial p {
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.testimonial span {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: right;
+  display: block;
+}
+
 
 .dropdown-menu {
   padding-left: 1rem !important;

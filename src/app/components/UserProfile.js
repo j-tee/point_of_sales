@@ -19,19 +19,21 @@ const UserProfile = (props) => {
       });
     }
   }, [dispatch, user]);
-  return (
-    <Modal show={isOpen} onHide={onRequestClose} size="md" style={{ marginTop: `${modalTop}px` }}>
-      <Modal.Header closeButton>
-        <span>User Profile</span>
-      </Modal.Header>
-      <Modal.Body>
-        <div className="user-profile">
-          <img src={user.picture} alt={user.name} />
-          <h2>{user.username}</h2>
-          <p>{user.email}</p>
-        </div>
-      </Modal.Body>
-    </Modal>
+  return (user
+    ? (
+      <Modal show={isOpen} onHide={onRequestClose} size="md" style={{ marginTop: `${modalTop}px` }}>
+        <Modal.Header closeButton>
+          <span>User Profile</span>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="user-profile">
+            {/* <img src={user.picture} alt={user.name} /> */}
+            <h2>{user.username}</h2>
+            <p>{user.email}</p>
+          </div>
+        </Modal.Body>
+      </Modal>
+    ) : null
 
   );
 };

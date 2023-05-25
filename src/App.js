@@ -20,6 +20,9 @@ import Employee from './app/components/Employee/Employee';
 import Receipt from './app/components/Receipt';
 import Toast, { showToastify } from './app/components/Toastify';
 import { ToastProvider } from './app/components/ToastContext';
+import Email from './app/components/Email';
+import Header from './app/components/Header';
+import ResetPasswordComponent from './app/components/ResetPasswordComponent';
 // import { resetMessage } from './app/redux/reducers/authSlice';
 
 function App() {
@@ -36,6 +39,7 @@ function App() {
     <ToastProvider>
       <NavMenu />
       <Toast />
+      <Header />
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -48,8 +52,10 @@ function App() {
         <Route path="/employees" element={<Employee />} />
         <Route path="/support" element={<Support />} />
         <Route path="/about" element={<About />} />
+        <Route path="/email" element={<Email />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/receipt/:orderId" element={<Receipt />} />
+        <Route path="/resetPassword/:resetPasswordToken" element={<ResetPasswordComponent />} />
       </Routes>
     </ToastProvider>
   );
