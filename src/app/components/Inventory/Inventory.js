@@ -17,6 +17,7 @@ import {
 import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
 import PaginationComponent from '../Pagination';
+import Category from '../Category';
 
 const Inventory = () => {
   // localStorage.clear();
@@ -34,6 +35,7 @@ const Inventory = () => {
   const [params, setParams] = useState({
     storeId: 0,
     categoryId: 0,
+    stockId: 0,
     page: 1,
     perPage: 10,
   });
@@ -99,7 +101,7 @@ const Inventory = () => {
         dispatch(getStocks(parseInt(value, 10)));
         setParams((prevParams) => ({
           ...prevParams,
-          store_id: value,
+          storeId: value,
         }));
         handleProductFetch();
         break;
@@ -108,7 +110,7 @@ const Inventory = () => {
         setStockId(value);
         setParams((prevParams) => ({
           ...prevParams,
-          stock_id: value,
+          stockId: value,
         }));
         handleProductFetch();
         break;
@@ -126,7 +128,7 @@ const Inventory = () => {
         setCategoryId(value);
         setParams((prevParams) => ({
           ...prevParams,
-          categoy_id: value,
+          categoryId: value,
         }));
         handleProductFetch();
         break;
@@ -291,6 +293,9 @@ const Inventory = () => {
     }
   }, [dispatch, newStock, trigger, storeId]);
 
+  useEffect(() => {
+    dispatch(getCategories(storeId));
+  }, [dispatch, storeId]);
   return (
     <Container>
       <Row className="pt-5 mt-5">
@@ -302,7 +307,7 @@ const Inventory = () => {
           <Row>
             <Form onSubmit={handleAddProduct}>
               <Form.Group>
-                <Form.Control as="select" value={stockId} name="stock" onChange={handleChange}>
+                <Form.Control as="select" value={stockId} name="stock_id" onChange={handleChange}>
                   <option value="">-- Select Stock --</option>
                   {stocks.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -461,7 +466,8 @@ const Inventory = () => {
                 </Col>
               </Row>
             </Form>
-            <Table striped bordered hover>
+            <Category storeId={storeId} />
+            {/* <Table striped bordered hover>
               <thead>
                 <tr>
                   <th>Stock ID</th>
@@ -478,13 +484,13 @@ const Inventory = () => {
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </Table> */}
             <hr />
           </Row>
           <Row>
             <Row>
               <Col md={3}>
-                <h1>Inventory</h1>
+                <h4>Product List</h4>
               </Col>
               <Col md={9}>
                 &nbsp;
