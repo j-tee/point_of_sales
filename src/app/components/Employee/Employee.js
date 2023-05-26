@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Button, Col, Container, Form, Row, Table,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +18,10 @@ const Employee = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getEmployees(0));
+    dispatch(getEmployees(0))
+      .then(() => {
+        console.log('Employees======>', employees);
+      });
   }, []);
 
   useEffect(() => {
@@ -80,24 +84,27 @@ const Employee = () => {
           </Col>
         </Row>
       </Form>
-      <Table striped bordered hover variant="dark">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((emp) => (
-            <tr key={emp.id}>
-              <td>{emp.name}</td>
-              <td>{emp.email}</td>
-              <td>&nbsp;</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      {employees.length === 0 ? (<Alert variant="info">No employees added</Alert>)
+        : (
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Has User Account</th>
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp.attributes.id}>
+                  <td>{emp.attributes.name}</td>
+                  <td>{emp.attributes.email}</td>
+                  <td>{emp.attributes.account_status.toString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
     </Container>
   );
 };

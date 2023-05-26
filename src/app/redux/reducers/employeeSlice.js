@@ -13,7 +13,8 @@ export const getEmployees = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await EmployeeService.getEmployees(id);
-      return response.data;
+      console.log('employees from slice ====>', response.data.employees.data);
+      return response.data.employees.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
