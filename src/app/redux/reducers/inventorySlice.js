@@ -135,11 +135,29 @@ export const getUniqueProductNamesByStock = createAsyncThunk(
     }
   },
 );
+
+export const getProductWitoutASpecificTax = createAsyncThunk(
+  'inventory/getProductWitoutASpecificTax',
+  async (taxId, thunkAPI) => {
+    try {
+      const response = await InventoryService.getProductWitoutASpecificTax(taxId);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(getProductWitoutASpecificTax.fulfilled, (state, action) => ({ ...state, products: action.payload, isLoading: false }));
+    builder
+      .addCase(getProductWitoutASpecificTax.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(getProductWitoutASpecificTax.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(getUniqueProductNamesByStock.fulfilled, (state, action) => ({ ...state, names: action.payload, isLoading: false }));
     builder
