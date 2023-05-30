@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import TaxService from '../../services/data/taxService';
 
@@ -61,9 +62,47 @@ export const applyTaxToSpecificProducts = createAsyncThunk(
   },
 );
 
+export const getTaxedProducts = createAsyncThunk(
+  'tax/getTaxedProducts',
+  async (params, thunkAPI) => {
+    try {
+      const response = await TaxService.getTaxedProducts(params.storeId, params.taxId, params.page, params.perPage);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getProductWithoutTaxes = createAsyncThunk(
+  'tax/getProductWithoutTaxes',
+  async (params, thunkAPI) => {
+    try {
+      const response = await TaxService.getProductWithoutTaxes(params.storeId, params.taxId, params.page, params.perPage);
+      console.log('PRODUCT WITHOUT TAXES======>', response.data);
+      return response.data.products;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getTaxesOnAProduct = createAsyncThunk(
+  'tax/getTaxesOnAProduct',
+  async (productId, thunkAPI) => {
+    try {
+      const response = await TaxService.getTaxesOnAProduct(productId);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 const initialState = {
   taxes: [],
   products: [],
+  pagination: {},
   tax: {},
   message: {},
   isLoading: '',
@@ -73,6 +112,24 @@ export const taxSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(getProductWithoutTaxes.fulfilled, (state, action) => ({
+      ...state, products: action.payload.products, pagination: action.payload.pagination, isLoading: false, message: 'Data loaded successfully',
+    }));
+    builder.addCase(getProductWithoutTaxes.pending, (state, action) => ({
+      ...state, message: action.payload, isLoading: true,
+    }));
+    builder.addCase(getProductWithoutTaxes.rejected, (state) => ({
+      ...state, message: 'Failed to load data', isLoading: false,
+    }));
+    builder.addCase(getTaxedProducts.fulfilled, (state, action) => ({
+      ...state, products: action.payload.products, pagination: action.payload.pagination, isLoading: false, message: 'Data loaded successfully',
+    }));
+    builder.addCase(getTaxedProducts.pending, (state, action) => ({
+      ...state, message: action.payload, isLoading: true,
+    }));
+    builder.addCase(getTaxedProducts.rejected, (state) => ({
+      ...state, message: 'Failed to load data', isLoading: false,
+    }));
     builder.addCase(applyTaxToSpecificProducts.fulfilled, (state, action) => ({
       ...state, tax: action.payload, isLoading: false, message: 'New tax applied',
     }));
@@ -82,8 +139,8 @@ export const taxSlice = createSlice({
     builder.addCase(applyTaxToSpecificProducts.rejected, (state) => ({
       ...state, message: 'Failed to apply new tax', isLoading: false,
     }));
-    builder.addCase(applyTax.fulfilled, (state, action) => ({
-      ...state, products: action.payload, isLoading: false, message: 'New tax applied',
+    builder.addCase(applyTax.fulfilled, (state) => ({
+      ...state, isLoading: false, message: 'New tax applied',
     }));
     builder.addCase(applyTax.pending, (state, action) => ({
       ...state, message: action.payload, isLoading: true,

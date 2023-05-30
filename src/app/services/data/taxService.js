@@ -5,6 +5,9 @@ import authHeader from '../../helpers/authHeader';
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const TaxService = {
+  getTaxesOnAProduct: (productId) => axios.get(`${API_URL}api/v1/getTaxesOnAProduct/${productId}`),
+  getProductWithoutTaxes: (storeId, taxId, page, perPage) => axios.get(`${API_URL}api/v1/taxes/getProductWithoutTaxes/${storeId}/${taxId}/${page}/${perPage}`, authHeader()),
+  getTaxedProducts: (storeId, taxId, page, perPage) => axios.get(`${API_URL}api/v1/taxes/getTaxedProducts/${storeId}/${taxId}/${page}/${perPage}`, authHeader()),
   applyTax: (taxId) => axios.post(`${API_URL}api/v1/taxes/applyTax/${taxId}`, authHeader()),
   applyTaxToSpecificProducts: (taxId, products) => axios.post(`${API_URL}api/v1/applyTaxToSpecificProducts/${taxId}`, products, authHeader()),
   getTaxList: (storeId) => axios.get(`${API_URL}api/v1/taxes/getTaxList/${storeId}`, authHeader()),

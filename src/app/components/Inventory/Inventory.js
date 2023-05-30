@@ -11,6 +11,8 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+import { Trash3 } from 'react-bootstrap-icons';
+import { Details, Edit } from '@mui/icons-material';
 import {
   addProduct, addStock, getProducts, getStocks,
 } from '../../redux/reducers/inventorySlice';
@@ -18,6 +20,8 @@ import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
 import PaginationComponent from '../Pagination';
 import Category from '../Category';
+import TaxModalDialog from '../Setting/TaxModalDialog';
+import DiscountModalDialog from '../Setting/DiscountModalDialog';
 
 const Inventory = () => {
   // localStorage.clear();
@@ -32,6 +36,8 @@ const Inventory = () => {
   const [storeId, setStoreId] = useState(0);
   const [stockId, setStockId] = useState(0);
   const [productName, setProductName] = useState('');
+  const [taxModalOpen, setTaxModalOpen] = useState(false);
+  const [discountModalOpen, setDiscountModalOpen] = useState(false);
   const [params, setParams] = useState({
     storeId: 0,
     categoryId: 0,
@@ -277,7 +283,19 @@ const Inventory = () => {
     });
     console.log('NEW STOCK FROM DATE =====>', newStock);
   };
+  const handleDiscountModalClick = (productId) => {
+    console.log(productId);
+    setDiscountModalOpen(true);
+  };
 
+  const handleTaxModalClick = (productId) => {
+    console.log(productId);
+    setTaxModalOpen(true);
+  };
+  const calculateModalPosition = () => {
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    return (window.innerHeight - navbarHeight) / 5;
+  };
   const handleAddStock = (e) => {
     e.preventDefault();
     setTrigger(true);
@@ -506,7 +524,7 @@ const Inventory = () => {
                     <th>Manufacturer</th>
                     <th>Qty In Stock</th>
                     <th>Country</th>
-                    <th>&nbsp;</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -516,11 +534,25 @@ const Inventory = () => {
                       <td>{product.attributes.manufacturer}</td>
                       <td>{product.attributes.qty_in_stock}</td>
                       <td>{product.attributes.country}</td>
-                      <td>
+                      {/* <td>
                         {product.exp_date && new Date(product.exp_date) < new Date() ? (
                           <Alert variant="danger">Expired!</Alert>
                         ) : null}
-                        <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(product.id)}>Delete</Button>
+                      </td> */}
+                      <td>
+                        {product.exp_date && new Date(product.exp_date) < new Date() ? (
+                          <Alert variant="danger">Expired! &nbsp; &nbsp;</Alert>
+                        ) : null}
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(product.id)}><Trash3 color="white" size={16} /></Button>
+                        &nbsp; &nbsp;
+                        <Button variant="primary" size="sm" onClick={() => handleDeleteProduct(product.id)}><Edit color="white" size={16} /></Button>
+                        &nbsp; &nbsp;
+                        <Button variant="info" size="sm" onClick={() => handleDeleteProduct(product.id)}><Details color="white" size={16} /></Button>
+                        &nbsp; &nbsp;
+                        <Button variant="info" size="sm" onClick={() => handleTaxModalClick(product.id)}>Taxes</Button>
+                        &nbsp; &nbsp;
+                        <Button variant="info" size="sm" onClick={() => handleDiscountModalClick(product.id)}>Discounts</Button>
+
                       </td>
                     </tr>
                   ))}
@@ -563,6 +595,18 @@ const Inventory = () => {
           </Row>
         </Col>
       </Row>
+      <TaxModalDialog
+        isOpen={taxModalOpen}
+        onRequestClose={() => setTaxModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setTaxModalOpen={setTaxModalOpen}
+      />
+      <DiscountModalDialog
+        isOpen={discountModalOpen}
+        onRequestClose={() => setDiscountModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setDiscountModalOpen={setDiscountModalOpen}
+      />
     </Container>
   );
 };
