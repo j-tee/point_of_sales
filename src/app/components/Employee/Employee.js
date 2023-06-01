@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -6,22 +7,23 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { addEmployee, getEmployees } from '../../redux/reducers/employeeSlice';
 import { getShops } from '../../redux/reducers/shopSlice';
+import UserAccModal from '../UserAccModal';
+import { getUserByEmail } from '../../redux/reducers/authSlice';
 // import { getEmployees } from '../../redux/reducers/employeeSlice';
 
 const Employee = () => {
+  const { user } = useSelector((state) => state.auth);
   const { employees } = useSelector((state) => state.employee);
   const { outlets } = useSelector((state) => state.shop);
   const [shopId, setShopId] = useState(0);
   const [email, setEmail] = useState();
   const [name, setName] = useState();
   const [employee, setEmployee] = useState();
+  const [userAccModalOpen, setUserAccModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getEmployees(0))
-      .then(() => {
-        console.log('Employees======>', employees);
-      });
+    dispatch(getEmployees(0));
   }, []);
 
   useEffect(() => {
@@ -59,6 +61,19 @@ const Employee = () => {
     }));
     dispatch(getEmployees(value));
   };
+
+  const calculateModalPosition = () => {
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    return (window.innerHeight - navbarHeight) / 5;
+  };
+
+  const handleModalOpen = (mail, name) => {
+    setEmail(mail);
+    setName(name);
+    setUserAccModalOpen(true);
+    dispatch(getUserByEmail(mail));
+  };
+
   return (
     <Container className="mt-5">
       <Form onSubmit={handleSubmit}>
@@ -99,12 +114,21 @@ const Employee = () => {
                 <tr key={emp.attributes.id}>
                   <td>{emp.attributes.name}</td>
                   <td>{emp.attributes.email}</td>
-                  <td>{emp.attributes.account_status.toString()}</td>
+                  <td><Button onClick={() => handleModalOpen(emp.attributes.email, emp.attributes.name)}>{emp.attributes.account_status.toString()}</Button></td>
                 </tr>
               ))}
             </tbody>
           </Table>
         )}
+      <UserAccModal
+        name={name}
+        user={user}
+        email={email}
+        isOpen={userAccModalOpen}
+        onRequestClose={() => setUserAccModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setUserAccModalOpen={setUserAccModalOpen}
+      />
     </Container>
   );
 };

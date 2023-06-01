@@ -37,7 +37,6 @@ const Login = (props) => {
     };
     dispatch(loginUser(userData)).then((response) => {
       setShowToast(true);
-      console.log('response ====>', response);
       if (response.error) {
         showToastify(`Login failure!! ${response.payload}`, 'error');
       } else {

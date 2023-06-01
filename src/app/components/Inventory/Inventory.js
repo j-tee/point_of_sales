@@ -7,7 +7,7 @@ import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import {
-  Container, Row, Col, Form, Button, ListGroup, Alert, Table, DropdownButton, Dropdown,
+  Container, Row, Col, Form, Button, Alert, Table, DropdownButton, Dropdown,
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,6 +54,7 @@ const Inventory = () => {
   const [description, setDescription] = useState('');
   const [country, setCountry] = useState('');
   const [unitCost, setUnitCost] = useState(0);
+  const [productId, setProductId] = useState(0);
   const [mnfDate, setMnfDate] = useState();
   const [stockDate, setStockDate] = useState('');
   const dispatch = useDispatch();
@@ -72,7 +73,6 @@ const Inventory = () => {
     category_id: '',
   });
 
-  const [notifications, setNotifications] = useState([]);
   const [trigger, setTrigger] = useState(false);
 
   const handleItemsPerPageChange = useCallback((newItemsPerPage) => {
@@ -227,20 +227,6 @@ const Inventory = () => {
     setProducts(products.filter((product) => product.id !== productId));
   };
 
-  const handleSetNotification = (event) => {
-    event.preventDefault();
-    const notification = {
-      type: event.target.type.value,
-      value: event.target.value.value,
-    };
-    setNotifications([...notifications, notification]);
-    event.target.reset();
-  };
-
-  const handleRemoveNotification = (index) => {
-    setNotifications(notifications.filter((_, i) => i !== index));
-  };
-
   const getExpiringProducts = () => {
     const now = new Date();
     return products.filter((product) => product.expiryDate && new Date(product.expiryDate) < now);
@@ -285,11 +271,13 @@ const Inventory = () => {
   };
   const handleDiscountModalClick = (productId) => {
     console.log(productId);
+    setProductId(productId);
     setDiscountModalOpen(true);
   };
 
   const handleTaxModalClick = (productId) => {
     console.log(productId);
+    setProductId(productId);
     setTaxModalOpen(true);
   };
   const calculateModalPosition = () => {
@@ -397,59 +385,6 @@ const Inventory = () => {
               </Button>
             </Form>
             <hr />
-            <h3>Notifications</h3>
-            <Form onSubmit={handleSetNotification}>
-              <Form.Group>
-                <Form.Label>Type</Form.Label>
-                <Form.Control as="select" name="type" required>
-                  <option value="">Select a type</option>
-                  <option value="expiry">Expiry Date</option>
-                  <option value="lowstock">
-                    Low Stock
-
-                  </option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Value</Form.Label>
-                <Form.Control type="text" name="value" required />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                Set
-              </Button>
-            </Form>
-            <hr />
-            <h3>Notifications List</h3>
-            {notifications.length === 0 ? (
-              <Alert variant="info">No notifications set</Alert>
-            ) : (
-              <ListGroup>
-                {notifications.map((notification, index) => (
-                  <ListGroup.Item key={index}>
-                    {notification.type === 'expiry' ? (
-                      <span>
-                        Notify me when a product is expiring in
-                        {' '}
-                        {notification.value}
-                        {' '}
-                        days
-                      </span>
-                    ) : (
-                      <span>
-                        Notify me when a product has less than
-                        {' '}
-                        {notification.value}
-                        {' '}
-                        in stock
-                      </span>
-                    )}
-                    <Button className="float-right" variant="danger" size="sm" onClick={() => handleRemoveNotification(index)}>
-                      Remove
-                    </Button>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            )}
           </Row>
         </Col>
         <Col sm={9}>
@@ -600,6 +535,8 @@ const Inventory = () => {
         onRequestClose={() => setTaxModalOpen(false)}
         calculateModalPosition={calculateModalPosition}
         setTaxModalOpen={setTaxModalOpen}
+        productId={productId}
+        storeId={storeId}
       />
       <DiscountModalDialog
         isOpen={discountModalOpen}

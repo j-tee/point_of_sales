@@ -4,6 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import InventoryService from '../../services/data/inventoryService';
 
 const initialState = {
+  notifications: [],
   stocks: [],
   stock: {},
   products: [],
@@ -147,11 +148,66 @@ export const getProductWitoutASpecificTax = createAsyncThunk(
     }
   },
 );
+
+export const addNotification = createAsyncThunk(
+  'inventory/addNotification',
+  async (notification, thunkAPI) => {
+    try {
+      const response = await InventoryService.addNotification(notification);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getNotifications = createAsyncThunk(
+  'inventory/getNotifications',
+  async (storeId, thunkAPI) => {
+    try {
+      const response = await InventoryService.getNotifications(storeId);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const deleteNotification = createAsyncThunk(
+  'inventory/deleteNotification',
+  async (id, thunkAPI) => {
+    try {
+      const response = await InventoryService.deleteNotification(id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(deleteNotification.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
+      .addCase(deleteNotification.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(deleteNotification.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
+      .addCase(getNotifications.fulfilled, (state, action) => ({ ...state, notifications: action.payload, isLoading: false }));
+    builder
+      .addCase(getNotifications.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(getNotifications.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
+      .addCase(addNotification.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
+      .addCase(addNotification.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(addNotification.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(getProductWitoutASpecificTax.fulfilled, (state, action) => ({ ...state, products: action.payload, isLoading: false }));
     builder

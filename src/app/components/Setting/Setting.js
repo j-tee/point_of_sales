@@ -4,23 +4,18 @@ import {
   Container, Form, Row, Tab, Tabs,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import UserAccountMngt from '../UserAccountMngt';
 import Tax from './Tax';
-import Discount from './Discount';
-// import { getTaxList } from '../../redux/reducers/taxSlice';
 import { getShops } from '../../redux/reducers/shopSlice';
+import Notification from './Notification';
 
 const Setting = () => {
   const { outlets } = useSelector((state) => state.shop);
-  // const { taxes } = useSelector((state) => state.tax);
   const [shopId, setShopId] = useState(0);
   const dispatch = useDispatch();
 
   const handleShopChange = (event) => {
     const { value } = event.target;
     setShopId(value);
-    console.log('shopId from settings======> ', value);
-    // dispatch(getTaxList(parseInt(value, 10)));
   };
 
   useEffect(() => {
@@ -50,14 +45,11 @@ const Setting = () => {
         id="uncontrolled-tab-example"
         className="mb-3"
       >
-        <Tab eventKey="acc" title="User Accounts">
-          <UserAccountMngt />
+        <Tab eventKey="acc" title="Notifications">
+          <Notification shopId={shopId} />
         </Tab>
         <Tab eventKey="taxes" title="Taxes">
           <Tax shopId={shopId} />
-        </Tab>
-        <Tab eventKey="discount" title="Discount">
-          <Discount />
         </Tab>
       </Tabs>
     </Container>

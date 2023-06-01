@@ -62,6 +62,8 @@ const AuthService = () => {
       return response;
     });
 
+  const getUserByEmail = (email) => axios.get(`${API_URL}users/${email}`, authHeader());
+
   const register = (username, email, password) => axios.post(`${API_URL}signup`,
     {
       user: {
@@ -79,6 +81,7 @@ const AuthService = () => {
     getCurrentUser,
     requestPasswordReset,
     resetPassword,
+    getUserByEmail,
   };
 };
 

@@ -26,7 +26,6 @@ export const resetMessage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await AuthService.resetMessage();
-      console.log('Message Reset=========>', response);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -64,11 +63,7 @@ export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, thunkAPI) => {
     try {
-      // API call to logout user
-      const headers = JSON.parse(localStorage.getItem('headers'));
-      console.log('HEADERS=====>', headers);
       const response = await AuthService.logout();
-      console.log('logoutUser response from AuthSlice=============> ', response.message);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -80,9 +75,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (userData, thunkAPI) => {
     try {
-      // API call to login user
       const response = await AuthService.login(userData.email, userData.password);
-      console.log('reponse from slice', response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -106,9 +99,19 @@ export const resetPassword = createAsyncThunk(
   'auth/resetPassword',
   async (pwd, thunkAPI) => {
     try {
-      console.log('pwd=======>', pwd);
       const response = await AuthService.resetPassword(pwd);
-      console.log('response==========.', response);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getUserByEmail = createAsyncThunk(
+  'auth/getUserByEmail',
+  async (email, thunkAPI) => {
+    try {
+      const response = await AuthService.getUserByEmail(email);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -122,6 +125,18 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(getUserByEmail.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isSuccessful = true;
+      })
+      .addCase(getUserByEmail.rejected, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(getUserByEmail.pending, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.message = action.payload.message;
         state.isSuccessful = true;
