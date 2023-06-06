@@ -259,7 +259,6 @@ const Inventory = () => {
     setNewStock({
       ...newStock, store_id: e.target.value,
     });
-    console.log('NEW STOCK=====>', newStock);
   };
 
   const handleStockDateChange = (e) => {
@@ -267,16 +266,13 @@ const Inventory = () => {
     setNewStock({
       ...newStock, stock_date: e.target.value,
     });
-    console.log('NEW STOCK FROM DATE =====>', newStock);
   };
-  const handleDiscountModalClick = (productId) => {
-    console.log(productId);
-    setProductId(productId);
-    setDiscountModalOpen(true);
-  };
+  // const handleDiscountModalClick = (productId) => {
+  //   setProductId(productId);
+  //   setDiscountModalOpen(true);
+  // };
 
   const handleTaxModalClick = (productId) => {
-    console.log(productId);
     setProductId(productId);
     setTaxModalOpen(true);
   };
@@ -485,9 +481,6 @@ const Inventory = () => {
                         <Button variant="info" size="sm" onClick={() => handleDeleteProduct(product.id)}><Details color="white" size={16} /></Button>
                         &nbsp; &nbsp;
                         <Button variant="info" size="sm" onClick={() => handleTaxModalClick(product.id)}>Taxes</Button>
-                        &nbsp; &nbsp;
-                        <Button variant="info" size="sm" onClick={() => handleDiscountModalClick(product.id)}>Discounts</Button>
-
                       </td>
                     </tr>
                   ))}

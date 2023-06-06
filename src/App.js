@@ -9,8 +9,6 @@ import Home from './app/components/Home/Home';
 import Dashboard from './app/components/Dashboard/Dashboard';
 import Product from './app/components/Product/Product';
 import Sale from './app/components/Sale/Sale';
-import Order from './app/components/Order/Order';
-import Customer from './app/components/Customer/Customer';
 import Report from './app/components/Report/Report';
 import Setting from './app/components/Setting/Setting';
 import Support from './app/components/Support/Support';
@@ -23,6 +21,9 @@ import { ToastProvider } from './app/components/ToastContext';
 import Email from './app/components/Email';
 import Header from './app/components/Header';
 import ResetPasswordComponent from './app/components/ResetPasswordComponent';
+import OrderDetails from './app/components/Order/OrderDetails';
+import CustomerDetail from './app/components/CustomerDetail';
+import PaymentDetails from './app/components/PaymentDetails';
 // import { resetMessage } from './app/redux/reducers/authSlice';
 
 function App() {
@@ -45,8 +46,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/products" element={<Product />} />
         <Route path="/sales" element={<Sale />} />
-        <Route path="/orders" element={<Order />} />
-        <Route path="/customers" element={<Customer />} />
+        <Route path="/orders" element={<OrderDetails />} />
+        <Route path="/customers" element={<CustomerDetail />} />
         <Route path="/reports" element={<Report />} />
         <Route path="/settings" element={<Setting />} />
         <Route path="/employees" element={<Employee />} />
@@ -54,6 +55,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/email" element={<Email />} />
         <Route path="/inventory" element={<Inventory />} />
+        <Route path="/payments" element={<PaymentDetails />} />
         <Route path="/receipt/:orderId" element={<Receipt />} />
         <Route path="/resetPassword/:resetPasswordToken" element={<ResetPasswordComponent />} />
       </Routes>

@@ -113,6 +113,6 @@ UserAccModal.propTypes = {
   onRequestClose: PropTypes.func.isRequired,
   calculateModalPosition: PropTypes.func.isRequired,
   setUserAccModalOpen: PropTypes.func.isRequired,
-  email: PropTypes.number.isRequired,
+  email: PropTypes.string.isRequired,
 };
 export default UserAccModal;

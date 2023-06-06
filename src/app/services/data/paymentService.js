@@ -9,6 +9,7 @@ const PaymentService = {
   addPayment: (payment) => axios.post(`${API_URL}api/v1/payments/addPayment`, payment, authHeader()),
   updatePayment: (payment) => axios.put(`${API_URL}api/v1/payments/updatePayment`, payment, authHeader()),
   deletePayment: (id) => axios.delete(`${API_URL}api/v1/payments/deletePayment/${id}`, authHeader()),
+  getPaymentDetails: (storeId, stockId, customerId, employeeId, startDate, endDate, page, perPage) => axios.get(`${API_URL}api/v1/payments/getPaymentDetails/${storeId}/${stockId}/${customerId}/${employeeId}/${startDate}/${endDate}/${page}/${perPage}`, authHeader()),
 };
 
 export default PaymentService;

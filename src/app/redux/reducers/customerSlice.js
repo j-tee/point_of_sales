@@ -7,6 +7,7 @@ const initialState = {
   customer: {},
   message: '',
   isLoading: false,
+  pagination: {},
 };
 
 export const deleteCustomer = createAsyncThunk(
@@ -80,11 +81,66 @@ export const resetCustomer = createAsyncThunk(
     }
   },
 );
+
+export const getCustomerDetails = createAsyncThunk(
+  'customer/getCustomerDetails',
+  async (params, thunkAPI) => {
+    try {
+      const response = await CustomerService.getCustomerDetails(params.storeId, params.page, params.perPage);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getCustomerList = createAsyncThunk(
+  'customer/getCustomerList',
+  async (stockId, thunkAPI) => {
+    try {
+      const response = await CustomerService.getCustomerList(stockId);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
 export const customerSlice = createSlice({
   name: 'customer',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(getCustomerList.fulfilled, (state, action) => ({
+        ...state,
+        customers: action.payload,
+        message: 'Customer information successfully loaded',
+        isLoading: false,
+      }));
+    builder
+      .addCase(getCustomerList.rejected, (state) => ({
+        ...state,
+        message: 'Failed to load customer information',
+        isLoading: false,
+      }));
+    builder
+      .addCase(getCustomerList.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(getCustomerDetails.fulfilled, (state, action) => ({
+        ...state,
+        customers: action.payload.customers,
+        message: 'Customer information successfully loaded',
+        isLoading: false,
+        pagination: action.payload.pagination,
+      }));
+    builder
+      .addCase(getCustomerDetails.rejected, (state) => ({
+        ...state,
+        message: 'Failed to load customer information',
+        isLoading: false,
+      }));
+    builder
+      .addCase(getCustomerDetails.pending, (state) => ({ ...state, isLoading: true }));
     builder
       .addCase(resetCustomer.fulfilled, (state, action) => ({
         ...state, customer: action.payload, message: 'Customer information successfully reset', isLoading: false,

@@ -55,7 +55,7 @@ const Product = () => {
     setProductId(prodId);
     setCategoryId(catId);
     setStartOrder(true);
-    setOrderStatus('pending');
+    setOrderStatus('Pending');
     setTrigger((trigger) => trigger + 1);
   };
 

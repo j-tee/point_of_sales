@@ -15,10 +15,12 @@ const Notification = ({ shopId }) => {
   useEffect(() => {
     dispatch(getNotifications(shopId));
   }, [dispatch, shopId]);
+
   const handleSetNotification = (event) => {
     event.preventDefault();
     const notification = {
-      type: event.target.type.value,
+      store_id: shopId,
+      notification_type: event.target.type.value,
       value: event.target.value.value,
     };
     // setNotifications([...notifications, notification]);
@@ -64,7 +66,7 @@ const Notification = ({ shopId }) => {
         <ListGroup>
           {notifications.map((notification) => (
             <ListGroup.Item key={notification.id}>
-              {notification.type === 'expiry' ? (
+              {notification.notification_type === 'expiry' ? (
                 <span>
                   Notify me when a product is expiring in
                   {' '}

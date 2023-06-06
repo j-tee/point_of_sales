@@ -153,7 +153,7 @@ export const addNotification = createAsyncThunk(
   'inventory/addNotification',
   async (notification, thunkAPI) => {
     try {
-      const response = await InventoryService.addNotification(notification);
+      const response = await InventoryService.addNotification({ notification });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

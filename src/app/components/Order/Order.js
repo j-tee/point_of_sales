@@ -20,7 +20,7 @@ const Order = ({ stockId, trigger }) => {
     setParams({
       stock_id: stockId,
       customer_id: customer.id,
-      status: 'pending',
+      status: 'Pending',
       employee_id: 0,
     });
   }, [stockId, customer.id]);
