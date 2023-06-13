@@ -21,14 +21,13 @@ export const showToastify = (message, type) => {
 
 const Toast = () => {
   const { showToast } = useContext(ToastContext);
-
   return (showToast
     ? (
       <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
-        newestOnTop={false}
+        newestOnTop
         closeOnClick
         rtl={false}
         pauseOnFocusLoss

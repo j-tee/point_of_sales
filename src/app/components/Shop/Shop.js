@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Col, Container, Form, ListGroup, Row,
@@ -7,29 +7,37 @@ import {
   getShops, registerShop, updateShop, deleteShop,
 } from '../../redux/reducers/shopSlice';
 import ShopService from '../../services/data/shopService';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const Shop = () => {
-  console.log('Calling shop ===> ');
   const dispatch = useDispatch();
   // localStorage.clear();
-  const { outlets, message, isLoading } = useSelector((state) => state.shop) ?? {};
+  const { outlets, isLoading } = useSelector((state) => state.shop);
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  console.log('MESSAGE====>', message);
+  const { setShowToast } = useContext(ToastContext);
+  // const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
-    if (user) {
-      dispatch(getShops(user.id));
-    }
+    dispatch(getShops(0));
   }, [dispatch]);
 
   const handleCreateShop = async (e) => {
     e.preventDefault();
     try {
       dispatch(registerShop({ store: { name, address } }))
-        .then(() => (dispatch(getShops(user.id))));
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Shop registered successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to register shop', 'error');
+            }
+          }
+          dispatch(getShops(0));
+        });
       setName('');
       setAddress('');
     } catch (error) {
@@ -39,7 +47,16 @@ const Shop = () => {
 
   const handleUpdateShop = async (id, shop) => {
     try {
-      dispatch(updateShop({ id, store: shop }));
+      dispatch(updateShop({ id, store: shop })).then((res) => {
+        setShowToast(true);
+        if (!res.error) {
+          showToastify('Shop updated successfully', 'success');
+        } else if (res.error) {
+          if (res.error.message === 'Rejected') {
+            showToastify('Failed to update shop', 'error');
+          }
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -48,7 +65,16 @@ const Shop = () => {
   const handleDeleteShop = async (id) => {
     try {
       await ShopService.deleteStore(id);
-      dispatch(deleteShop(id));
+      dispatch(deleteShop(id)).then((res) => {
+        setShowToast(true);
+        if (!res.error) {
+          showToastify('Shop deleted successfully', 'success');
+        } else if (res.error) {
+          if (res.error.message === 'Rejected') {
+            showToastify('Failed to remove shop from database', 'error');
+          }
+        }
+      });
     } catch (error) {
       console.error(error);
     }

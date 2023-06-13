@@ -240,9 +240,24 @@ const Product = () => {
                         {product.attributes.unit_price}
                       </Card.Text>
                       <Card.Text>
-                        Quantity:
+                        Quantity In Stock:
                         {' '}
                         {product.attributes.qty_in_stock}
+                      </Card.Text>
+                      <Card.Text>
+                        Qty Sold:
+                        {' '}
+                        {product.attributes.qty_of_product_sold}
+                      </Card.Text>
+                      <Card.Text>
+                        Damages:
+                        {' '}
+                        {product.attributes.qty_damaged}
+                      </Card.Text>
+                      <Card.Text>
+                        Qty Available:
+                        {' '}
+                        {product.attributes.qty_available}
                       </Card.Text>
                       <Card.Text>
                         Category:

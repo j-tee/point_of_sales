@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-debugger */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,6 +12,8 @@ import {
   addOrderLineItem, getOrderLineItem, getOrderLineItems, updateOrderLineItem,
 } from '../../redux/reducers/orderlineSlice';
 import Payment from '../payment';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const OrderLineItem = ({ productId, trigger }) => {
   const { lineItems, pagination } = useSelector((state) => state.orderline);
@@ -23,6 +25,7 @@ const OrderLineItem = ({ productId, trigger }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const { setShowToast } = useContext(ToastContext);
   // const [quantity, setQuantity] = useState(0);
   const calculateModalPosition = () => {
     const navbarHeight = document.querySelector('.navbar').offsetHeight;
@@ -32,9 +35,19 @@ const OrderLineItem = ({ productId, trigger }) => {
   useEffect(() => {
     if (trigger && order?.id) {
       dispatch(addOrderLineItem({ product_id: productId, order_id: order.id, quantity: 1 }))
-        .then(() => (setlineItemUpdated(true)));
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Product added to order successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to add product to order', 'error');
+            }
+          }
+          setlineItemUpdated(true);
+        });
     }
-  }, [dispatch, productId, trigger, order]);
+  }, [dispatch, productId, trigger, order, setShowToast]);
 
   useEffect(() => {
     if (order.id && customer?.id && productId && trigger) {
@@ -73,7 +86,15 @@ const OrderLineItem = ({ productId, trigger }) => {
         }
         orderlineItem.id = id;
         dispatch(updateOrderLineItem(orderlineItem))
-          .then(() => {
+          .then((res) => {
+            setShowToast(true);
+            if (!res.error) {
+              showToastify('Order updated successfully', 'success');
+            } else if (res.error) {
+              if (res.error.message === 'Rejected') {
+                showToastify('Failed to update  order', 'error');
+              }
+            }
             setlineItemUpdated(true);
           });
       });

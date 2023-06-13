@@ -5,10 +5,10 @@ import { Container, Modal } from 'react-bootstrap';
 
 const DiscountModalDialog = (props) => {
   const {
+    // eslint-disable-next-line no-unused-vars
     isOpen, onRequestClose, calculateModalPosition, setDiscountModalOpen,
   } = props;
   const [modalTop, setModalTop] = useState(0);
-  console.log(setDiscountModalOpen);
 
   useEffect(() => {
     if (isOpen) {

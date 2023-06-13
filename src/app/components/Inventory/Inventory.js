@@ -1,10 +1,7 @@
-/* eslint-disable no-debugger */
-/* eslint-disable default-case */
-/* eslint-disable no-undef */
 /* eslint-disable max-len */
-/* eslint-disable react/no-array-index-key */
+/* eslint-disable default-case */
 import React, {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import {
   Container, Row, Col, Form, Button, Alert, Table, DropdownButton, Dropdown,
@@ -22,10 +19,11 @@ import PaginationComponent from '../Pagination';
 import Category from '../Category';
 import TaxModalDialog from '../Setting/TaxModalDialog';
 import DiscountModalDialog from '../Setting/DiscountModalDialog';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const Inventory = () => {
-  // localStorage.clear();
-  const { stocks } = useSelector((state) => state.inventory);
+  const { stocks, message } = useSelector((state) => state.inventory);
   const user = JSON.parse(localStorage.getItem('user'));
   const { outlets } = useSelector((state) => state.shop);
   const { categories } = useSelector((state) => state.category);
@@ -38,6 +36,7 @@ const Inventory = () => {
   const [productName, setProductName] = useState('');
   const [taxModalOpen, setTaxModalOpen] = useState(false);
   const [discountModalOpen, setDiscountModalOpen] = useState(false);
+  const { setShowToast } = useContext(ToastContext);
   const [params, setParams] = useState({
     storeId: 0,
     categoryId: 0,
@@ -193,7 +192,6 @@ const Inventory = () => {
     setNewStock({
       ...newStock, store_id: storeId,
     });
-    console.log('newStock=====>', newStock);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -206,7 +204,17 @@ const Inventory = () => {
 
   const handleAddProduct = (event) => {
     event.preventDefault();
-    dispatch(addProduct(newProduct));
+    dispatch(addProduct(newProduct)).then((res) => {
+      setShowToast(true);
+      if (!res.error) {
+        showToastify('New product added successfully', 'success');
+        window.location.reload();
+      } else if (res.error) {
+        if (res.error.message === 'Rejected') {
+          showToastify(message || 'An error occurred while adding new product to the database', 'error');
+        }
+      }
+    });
     setNewProduct({
       store_id: '',
       stock_id: '',
@@ -223,9 +231,9 @@ const Inventory = () => {
     });
   };
 
-  const handleDeleteProduct = (productId) => {
-    setProducts(products.filter((product) => product.id !== productId));
-  };
+  // const handleDeleteProduct = (productId) => {
+  //   setProducts(products.filter((product) => product.id !== productId));
+  // };
 
   const getExpiringProducts = () => {
     const now = new Date();
@@ -288,12 +296,20 @@ const Inventory = () => {
   useEffect(() => {
     if (trigger && (storeId > 0)) {
       dispatch(addStock(newStock))
-        .then(() => {
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('New stock added successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify(message || 'An error occured while adding new stock entry', 'error');
+            }
+          }
           setTrigger(false);
           dispatch(getStocks(storeId));
         });
     }
-  }, [dispatch, newStock, trigger, storeId]);
+  }, [dispatch, newStock, trigger, storeId, setShowToast, message]);
 
   useEffect(() => {
     dispatch(getCategories(storeId));
@@ -448,13 +464,14 @@ const Inventory = () => {
             {products.length === 0 ? (
               <Alert variant="info">No products added</Alert>
             ) : (
-              <Table striped bordered hover>
+              <Table striped hover>
                 <thead>
                   <tr>
                     <th>Product Name</th>
-                    <th>Manufacturer</th>
-                    <th>Qty In Stock</th>
-                    <th>Country</th>
+                    <th>In Stock</th>
+                    <th>Sold</th>
+                    <th>Damages</th>
+                    <th>Available</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -462,9 +479,10 @@ const Inventory = () => {
                   {products.map((product) => (
                     <tr key={product.id}>
                       <td><strong>{product.attributes.product_name}</strong></td>
-                      <td>{product.attributes.manufacturer}</td>
                       <td>{product.attributes.qty_in_stock}</td>
-                      <td>{product.attributes.country}</td>
+                      <td>{product.attributes.qty_of_product_sold}</td>
+                      <td>{product.attributes.qty_damaged}</td>
+                      <td>{product.attributes.qty_available}</td>
                       {/* <td>
                         {product.exp_date && new Date(product.exp_date) < new Date() ? (
                           <Alert variant="danger">Expired!</Alert>
@@ -474,11 +492,11 @@ const Inventory = () => {
                         {product.exp_date && new Date(product.exp_date) < new Date() ? (
                           <Alert variant="danger">Expired! &nbsp; &nbsp;</Alert>
                         ) : null}
-                        <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(product.id)}><Trash3 color="white" size={16} /></Button>
+                        <Button variant="danger" size="sm" onClick={() => handleTaxModalClick(product.id)}><Trash3 color="white" size={16} /></Button>
                         &nbsp; &nbsp;
-                        <Button variant="primary" size="sm" onClick={() => handleDeleteProduct(product.id)}><Edit color="white" size={16} /></Button>
+                        <Button variant="primary" size="sm" onClick={() => handleTaxModalClick(product.id)}><Edit color="white" size={16} /></Button>
                         &nbsp; &nbsp;
-                        <Button variant="info" size="sm" onClick={() => handleDeleteProduct(product.id)}><Details color="white" size={16} /></Button>
+                        <Button variant="info" size="sm" onClick={() => handleTaxModalClick(product.id)}><Details color="white" size={16} /></Button>
                         &nbsp; &nbsp;
                         <Button variant="info" size="sm" onClick={() => handleTaxModalClick(product.id)}>Taxes</Button>
                       </td>

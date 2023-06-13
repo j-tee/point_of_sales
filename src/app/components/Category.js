@@ -1,16 +1,19 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Button, Col, Form, Row,
 } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { addCategory, getCategories } from '../redux/reducers/categorySlice';
+import ToastContext from './ToastContext';
+import { showToastify } from './Toastify';
 
 const Category = ({ storeId }) => {
   const [categoryName, setCategoryName] = useState('');
   const [description, setDescription] = useState('');
   const [trigger, setTrigger] = useState(false);
+  const { setShowToast } = useContext(ToastContext);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,14 +24,22 @@ const Category = ({ storeId }) => {
         store_id: storeId,
       };
 
-      dispatch(addCategory(categoryData)).then(() => {
+      dispatch(addCategory(categoryData)).then((res) => {
+        setShowToast(true);
+        if (!res.error) {
+          showToastify('Category added successfully', 'success');
+        } else if (res.error) {
+          if (res.error.message === 'Rejected') {
+            showToastify('Failed to add category', 'error');
+          }
+        }
         setCategoryName('');
         setDescription('');
         dispatch(getCategories(storeId));
         setTrigger(false);
       });
     }
-  }, [categoryName, description, dispatch, storeId, trigger]);
+  }, [categoryName, description, dispatch, setShowToast, storeId, trigger]);
 
   const handleAddCategory = (e) => {
     e.preventDefault();

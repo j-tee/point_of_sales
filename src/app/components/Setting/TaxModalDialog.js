@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -10,6 +11,8 @@ import { DeleteForeverOutlined } from '@mui/icons-material';
 import {
   addProductTax, deleteProductTax, getTaxList, getTaxesOnAProduct,
 } from '../../redux/reducers/taxSlice';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const TaxModalDialog = (props) => {
   const {
@@ -18,9 +21,9 @@ const TaxModalDialog = (props) => {
   const { taxes } = useSelector((state) => state.tax);
   const { taxesOnProduct } = useSelector((state) => state.tax);
   const [modalTop, setModalTop] = useState(0);
+  const { setShowToast } = useContext(ToastContext);
   // const [productTaxObject, setProductTaxObject] = useState({});
   const dispatch = useDispatch();
-  console.log(setTaxModalOpen);
   useEffect(() => {
     if (isOpen) {
       setModalTop(calculateModalPosition());
@@ -39,11 +42,29 @@ const TaxModalDialog = (props) => {
     };
     if (e.target.checked) {
       dispatch(addProductTax(obj))
-        .then(() => {
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Tax applied successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to apply tax', 'error');
+            }
+          }
           dispatch(getTaxesOnAProduct(productId));
         });
     } else {
-      dispatch(deleteProductTax({ product_id: productId, tax_id: e.target.id }));
+      dispatch(deleteProductTax({ product_id: productId, tax_id: e.target.id }))
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Tax removed from product successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to remove tax from product', 'error');
+            }
+          }
+        });
     }
   };
   return (

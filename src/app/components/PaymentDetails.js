@@ -106,7 +106,6 @@ const PaymentDetails = () => {
 
   const handleStartDateChange = (e) => {
     const { value } = e.target;
-    console.log('value from startDate Change=============>', value);
     setStartDate(value);
     setParams((prevParams) => ({
       ...prevParams,

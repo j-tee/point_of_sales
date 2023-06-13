@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Github, Linkedin, Twitter,
 } from 'react-bootstrap-icons';
+import { Link } from 'react-router-dom';
 import Register from '../Register/Register';
 import Login from '../Login/Login';
 import ShoppingCartIcon from '../ShoppingCartIcon';
@@ -43,12 +44,11 @@ const NavMenu = () => {
   const handleLogoutClick = () => {
     dispatch(logoutUser()).then((response) => {
       setShowToast(true);
-      console.log('response from logout ======>', response);
       if (response.error) {
-        console.log('checkout if block=====>', response.error.message);
         localStorage.removeItem('user');
         localStorage.removeItem('headers');
         setUser('');
+        showToastify('User logged out failed', 'error');
       } else {
         showToastify('User logged out successfully', 'success');
         setUser('');
@@ -75,25 +75,25 @@ const NavMenu = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto menu-font fw-bolder">
-              <Nav.Link href="/dashboard">DASHBOARD</Nav.Link>
-              <Nav.Link href="/products">SALES</Nav.Link>
-              <Nav.Link href="/inventory">INVENTORY</Nav.Link>
-              <Nav.Link href="/sales">BALANCE SHEET</Nav.Link>
-              <Nav.Link href="/orders">ORDERS</Nav.Link>
-              <Nav.Link href="/customers">CUSTOMERS</Nav.Link>
-              <Nav.Link href="/employees">EMPLOYEES</Nav.Link>
-              <Nav.Link href="/payments">PAYMENTS</Nav.Link>
-              <Nav.Link href="/reports">REPORTS/ANALYTICS</Nav.Link>
-              <Nav.Link href="/settings">SETTINGS</Nav.Link>
-              <Nav.Link href="support">SUPPORT</Nav.Link>
-              <Nav.Link href="/about">ABOUT</Nav.Link>
-              <Nav.Link href="/shoppingcart">
+              <Link to="/dashboard">DASHBOARD</Link>
+              <Link to="/products">SALES</Link>
+              <Link to="/inventory">INVENTORY</Link>
+              <Link to="/sales">BALANCE SHEET</Link>
+              <Link to="/orders">ORDERS</Link>
+              <Link to="/customers">CUSTOMERS</Link>
+              <Link to="/employees">EMPLOYEES</Link>
+              <Link to="/payments">PAYMENTS</Link>
+              <Link to="/reports">REPORTS/ANALYTICS</Link>
+              <Link to="/settings">SETTINGS</Link>
+              <Link to="support">SUPPORT</Link>
+              <Link to="/about">ABOUT</Link>
+              <Link to="/shoppingcart">
                 <CartContext.Provider value={{ cart, setCart }}>
                   <div>
                     <ShoppingCartIcon cartCount={cart.length} />
                   </div>
                 </CartContext.Provider>
-              </Nav.Link>
+              </Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

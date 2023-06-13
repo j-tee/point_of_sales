@@ -3,10 +3,13 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useContext,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { addOrder, getOrders } from '../../redux/reducers/orderSlice';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const Order = ({ stockId, trigger }) => {
   const { order } = useSelector((state) => state.order);
@@ -15,6 +18,7 @@ const Order = ({ stockId, trigger }) => {
   const dispatch = useDispatch();
   // const [orderObject, setOrderObject] = useState({});
   const [params, setParams] = useState({});
+  const { setShowToast } = useContext(ToastContext);
 
   useEffect(() => {
     setParams({
@@ -26,8 +30,17 @@ const Order = ({ stockId, trigger }) => {
   }, [stockId, customer.id]);
 
   const dispatchAddOrder = useCallback(() => {
-    dispatch(addOrder(params));
-  }, [dispatch, params]);
+    dispatch(addOrder(params)).then((res) => {
+      setShowToast(true);
+      if (!res.error) {
+        showToastify('Order added successfully', 'success');
+      } else if (res.error) {
+        if (res.error.message === 'Rejected') {
+          showToastify('Failed to add order', 'error');
+        }
+      }
+    });
+  }, [dispatch, params, setShowToast]);
 
   const dispatchGetOrders = useCallback(() => {
     dispatch(getOrders(params));

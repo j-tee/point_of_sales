@@ -20,7 +20,6 @@ const Receipt = () => {
   useEffect(() => {
     dispatch(getTaxes(orderId));
   }, [orderId, dispatch]);
-  console.log(taxes);
 
   useEffect(() => {
     if (taxes) {

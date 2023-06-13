@@ -6,3 +6,13 @@ export default function authHeader() {
   }
   return {};
 }
+
+export function paymentHeader(refId, subKey, data) {
+  return {
+    headers: {
+      'X-Reference-Id': refId,
+      'Ocp-Apim-Subscription-Key': subKey,
+    },
+    body: JSON.stringify(data),
+  };
+}

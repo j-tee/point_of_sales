@@ -15,7 +15,6 @@ const ResetPasswordComponent = () => {
   const dispatch = useDispatch();
   const { resetPasswordToken } = useParams(); // searchParams.get('reset_password_token');
   const handleSubmit = (event) => {
-    console.log('handleSubmit called===>');
     setShowToast(true);
     const form = event.currentTarget;
     event.preventDefault();
@@ -29,9 +28,16 @@ const ResetPasswordComponent = () => {
           password_confirmation: confirmPassword,
           reset_password_token: resetPasswordToken,
         };
-        dispatch(resetPassword(pwd)).then(() => {
+        dispatch(resetPassword(pwd)).then((res) => {
           // setPassword('');
           // setConfirmPassword('');
+          if (!res.error) {
+            showToastify('Password reset was successful', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to reset password', 'error');
+            }
+          }
         }).catch((error) => {
           setError(error);
           showToastify(error.message, 'error');

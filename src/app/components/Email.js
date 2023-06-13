@@ -14,8 +14,6 @@ const Email = () => {
   const dispatch = useDispatch();
   const { setShowToast } = useContext(ToastContext);
 
-  console.log('mesage=>', message, 'issuccessful======>', isSuccessful);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();

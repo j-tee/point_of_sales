@@ -13,12 +13,9 @@ export const getShops = createAsyncThunk(
   'shop/getShops',
   async (id, thunkAPI) => {
     try {
-      // console.log('CALL TO getShops =>', id);
       const response = await ShopService.getShops(id);
-      // console.log('CALL fromTHUNK=>', response.data);
       return response.data;
     } catch (error) {
-      // console.log('CALL fromTHUNK ERROR=>', error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },
@@ -27,7 +24,6 @@ export const getShops = createAsyncThunk(
 export const registerShop = createAsyncThunk(
   'shop/registerShops',
   async (shop, thunkAPI) => {
-    // console.log('SHOP=>', shop);
     try {
       const response = await ShopService.registerShop(shop);
       return response.data;

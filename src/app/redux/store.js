@@ -12,6 +12,7 @@ import orderlineReducer from './reducers/orderlineSlice';
 import paymentReducer from './reducers/paymentSlice';
 import taxReducer from './reducers/taxSlice';
 import employeeReducer from './reducers/employeeSlice';
+import subscriptionReducer from './reducers/subscriptionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -27,5 +28,6 @@ export const store = configureStore({
     payment: paymentReducer,
     tax: taxReducer,
     employee: employeeReducer,
+    momo: subscriptionReducer,
   },
 });

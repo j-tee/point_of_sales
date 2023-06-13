@@ -3,6 +3,7 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import AuthService from '../../services/auth/authService';
+// import { showToastify } from '../../components/Toastify';
 
 // const user = JSON.parse(localStorage.getItem('user'));
 
@@ -19,6 +20,8 @@ const initialState = {
   isSuccessful: false,
   user: null,
   message: '',
+  roles: [],
+  role: {},
 };
 
 export const resetMessage = createAsyncThunk(
@@ -119,12 +122,83 @@ export const getUserByEmail = createAsyncThunk(
   },
 );
 
+export const getRoles = createAsyncThunk(
+  'auth/getRoles',
+  async (_, thunkAPI) => {
+    try {
+      const response = await AuthService.getRoles();
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const addUserToRole = createAsyncThunk(
+  'auth/addUserToRole',
+  async (userRole, thunkAPI) => {
+    try {
+      const response = await AuthService.addUserToRole(userRole);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const removeRole = createAsyncThunk(
+  'auth/removeRole',
+  async (userRole, thunkAPI) => {
+    try {
+      const response = await AuthService.removeRole(userRole.user_id, userRole.role_id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(removeRole.fulfilled, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = true;
+      })
+      .addCase(removeRole.rejected, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(removeRole.pending, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(addUserToRole.fulfilled, (state, action) => {
+        state.role = action.payload;
+        state.isSuccessful = true;
+      })
+      .addCase(addUserToRole.rejected, (state, action) => {
+        state.message = action.payload.message;
+        state.isSuccessful = false;
+      })
+      .addCase(addUserToRole.pending, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(getRoles.fulfilled, (state, action) => {
+        state.roles = action.payload;
+        state.isSuccessful = true;
+      })
+      .addCase(getRoles.rejected, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
+      .addCase(getRoles.pending, (state, action) => {
+        state.message = action.payload;
+        state.isSuccessful = false;
+      })
       .addCase(getUserByEmail.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isSuccessful = true;

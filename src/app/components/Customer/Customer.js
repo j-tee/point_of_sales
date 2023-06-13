@@ -1,15 +1,17 @@
 /* eslint-disable max-len */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Form, FormGroup, FormLabel, FormControl, Row,
 } from 'react-bootstrap';
-import Casual from 'casual-browserify';
+// import Casual from 'casual-browserify';
 import {
   addCustomer, getCustomer, getCustomers, resetCustomer,
 } from '../../redux/reducers/customerSlice';
+import ToastContext from '../ToastContext';
+import { showToastify } from '../Toastify';
 
 const Customer = ({ setAddToCartButtonStatus, storeId }) => {
   const { customer, customers } = useSelector((state) => state.customer) || {};
@@ -22,10 +24,7 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [customerId, setCustomerId] = useState(0);
   const dispatch = useDispatch();
-
-  // console.log('New storeId from customer:=>', storeId);
-  // console.log('New productId from customer:=>', productId);
-  // console.log('CUSTOMER=>', customer);
+  const { setShowToast } = useContext(ToastContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,7 +33,17 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
         name, email, phone, store_id: storeId, address,
       };
       dispatch(addCustomer(customer))
-        .then(() => (dispatch(getCustomers(storeId))));
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Customer added to role successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to add customer', 'error');
+            }
+          }
+          dispatch(getCustomers(storeId));
+        });
     }
     setName('');
     setEmail('');
@@ -53,13 +62,23 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
     if (!isChecked && initialLoad) {
       setAddToCartButtonStatus(false);
       const customerObject = {
-        name: `${Casual.first_name} ${Casual.last_name}`,
-        email: Casual.email,
-        phone: Casual.phone,
-        address: `${Casual.address} ${Casual.city}, ${Casual.state_abbr} ${Casual.zip}`,
+        name: 'N/A',
+        email: 'N/A',
+        phone: 'N/A',
+        address: 'N/A',
         store_id: storeId,
       };
-      dispatch(addCustomer(customerObject));
+      dispatch(addCustomer(customerObject))
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Customer added to role successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to add customer', 'error');
+            }
+          }
+        });
       setInitialLoad(false);
     }
   };
@@ -75,7 +94,6 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
     setCustomerId(value);
     dispatch(getCustomer(parseInt(value, 10)))
       .then((res) => {
-        // console.log('CUSTOMER ===========================>', res.payload);
         setName(res.payload.name);
         setAddress(res.payload.address);
         setPhone(res.payload.phone);

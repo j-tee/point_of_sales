@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Tax from './Tax';
 import { getShops } from '../../redux/reducers/shopSlice';
 import Notification from './Notification';
+import Subscription from '../Subscription';
 
 const Setting = () => {
   const { outlets } = useSelector((state) => state.shop);
@@ -41,15 +42,18 @@ const Setting = () => {
         </Row>
       </Form>
       <Tabs
-        defaultActiveKey="settings"
+        defaultActiveKey="not"
         id="uncontrolled-tab-example"
         className="mb-3"
       >
-        <Tab eventKey="acc" title="Notifications">
+        <Tab eventKey="not" title="Notifications">
           <Notification shopId={shopId} />
         </Tab>
         <Tab eventKey="taxes" title="Taxes">
           <Tax shopId={shopId} />
+        </Tab>
+        <Tab eventKey="sub" title="Subscription">
+          <Subscription />
         </Tab>
       </Tabs>
     </Container>

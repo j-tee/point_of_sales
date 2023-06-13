@@ -7,12 +7,13 @@ import authHeader from '../../helpers/authHeader';
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const AuthService = () => {
+  const addUserToRole = (userRole) => axios.post(`${API_URL}current_user/addUserToRole`, userRole, authHeader());
+  const removeRole = (userId, roleId) => axios.delete(`${API_URL}current_user/removeRole/${userId}/${roleId}`, authHeader());
+  const getRoles = () => axios.get(`${API_URL}current_user/roles`, authHeader());
   const getCurrentUser = () => axios.get(`${API_URL}current_user`,
     {
       headers: JSON.parse(localStorage.getItem('header')),
-    }).then((response) => {
-    localStorage.setItem('user', JSON.stringify(response.data.data));
-  });
+    });
 
   const resetPassword = (pwd) => axios.put(`${API_URL}password`,
     {
@@ -43,7 +44,6 @@ const AuthService = () => {
       if (response.headers.authorization) {
         localStorage.setItem('header', JSON.stringify(response.headers));
         const header = JSON.parse(localStorage.getItem('header'));
-        console.log('headers information=> ', header);
         localStorage.setItem('user', JSON.stringify(response.data.data));
       }
 
@@ -82,6 +82,9 @@ const AuthService = () => {
     requestPasswordReset,
     resetPassword,
     getUserByEmail,
+    getRoles,
+    addUserToRole,
+    removeRole,
   };
 };
 

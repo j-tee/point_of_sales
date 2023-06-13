@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Button,
   Col, Form, Modal, Row, Table,
@@ -8,6 +8,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addPayment } from '../redux/reducers/paymentSlice';
+import ToastContext from './ToastContext';
+import { showToastify } from './Toastify';
 
 const Payment = (props) => {
   const {
@@ -23,6 +25,7 @@ const Payment = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
+  const { setShowToast } = useContext(ToastContext);
 
   useEffect(() => {
     if (isOpen) {
@@ -35,9 +38,7 @@ const Payment = (props) => {
 
   const handlePaymentSubmit = (event) => {
     setSubmitted(true, () => { // Use callback function with setSubmitted
-      console.log('SUBMITTED handlePaymentSubmit ', submitted);
-      const { value } = event.target;
-      console.log(value);
+      event.preventDefault();
       setPaymentModalOpen(false);
     });
   };
@@ -52,10 +53,17 @@ const Payment = (props) => {
   };
 
   useEffect(() => {
-    console.log('SUBMITTED useEffect ', paymentObject);
     if (Object.keys(paymentObject).length > 0) {
       dispatch(addPayment(paymentObject))
-        .then(() => {
+        .then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('Payment added successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to add payment', 'error');
+            }
+          }
           navigate(`/receipt/${orderId}`); // Fix template string
         });
     }

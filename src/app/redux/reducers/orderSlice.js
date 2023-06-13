@@ -55,7 +55,6 @@ export const getOrderDetails = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await OrderService.getOrderDetails(params.stockId, params.customerId, params.employeeId, params.status, params.page, params.perPage);
-      console.log('getOrderDetails==============>', response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

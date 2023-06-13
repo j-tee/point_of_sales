@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Alert, Button, Form, Modal,
 } from 'react-bootstrap';
@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { showToastify } from './Toastify';
 import { registerUser } from '../redux/reducers/authSlice';
 import { getEmployees } from '../redux/reducers/employeeSlice';
+import ToastContext from './ToastContext';
 
 const UserAccModal = (props) => {
   const {
@@ -20,6 +21,7 @@ const UserAccModal = (props) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const { setShowToast } = useContext(ToastContext);
 
   useEffect(() => {
     if (isOpen) {
@@ -47,7 +49,15 @@ const UserAccModal = (props) => {
           password,
           password_confirmation: confirmPassword,
         };
-        dispatch(registerUser(userData)).then(() => {
+        dispatch(registerUser(userData)).then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('User registered successfully', 'success');
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Failed to register user', 'error');
+            }
+          }
           // showToast(message, isSuccessful ? 'sucess' : 'danger');
           dispatch(getEmployees(0));
           setPassword('');
