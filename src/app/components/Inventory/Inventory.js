@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Trash3 } from 'react-bootstrap-icons';
 import { Details, Edit } from '@mui/icons-material';
 import {
-  addProduct, addStock, getProducts, getStocks,
+  addProduct, addStock, getDamages, getProducts, getStocks,
 } from '../../redux/reducers/inventorySlice';
 import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
@@ -319,6 +319,13 @@ const Inventory = () => {
 
   const openDamageModalOpen = (productId) => {
     setProductId(productId);
+    dispatch(getDamages({ productId, page: 1, perPage: 10 })).then((res) => {
+      if (res.error) {
+        if (res.error.message === 'Rejected') {
+          showToastify('Failed to load data on damages', 'error');
+        }
+      }
+    });
     setDamageModalOpen(true);
   };
   return (
@@ -505,7 +512,7 @@ const Inventory = () => {
                         &nbsp; &nbsp;
                         <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Details color="blue" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
-                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}>Taxes</Nav.Link>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}>Apply Taxes</Nav.Link>
                       </td>
                     </tr>
                   ))}

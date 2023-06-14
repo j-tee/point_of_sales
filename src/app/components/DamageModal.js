@@ -20,6 +20,11 @@ const DamageModal = (props) => {
   const [damageDate, setDamageDate] = useState();
   const { setShowToast } = useContext(ToastContext);
   const dispatch = useDispatch();
+  const [params, setParams] = useState({
+    productId,
+    page: 1,
+    perPage: 10,
+  });
   useEffect(() => {
     if (isOpen) {
       setModalTop(calculateModalPosition());
@@ -38,9 +43,14 @@ const DamageModal = (props) => {
     };
     dispatch(addDamages(damageObj)).then((res) => {
       setShowToast(true);
+      window.location.reload();
       if (!res.error) {
         showToastify('Database successfully updated', 'success');
-        dispatch(getDamages(productId));
+        setParams((prevParams) => ({
+          ...prevParams,
+          productId,
+        }));
+        dispatch(getDamages(params));
       } else if (res.error) {
         if (res.error.message === 'Rejected') {
           showToastify('Failed to update database, Data was not saved', 'error');
@@ -94,6 +104,8 @@ const DamageModal = (props) => {
                 <th>#</th>
                 <th>Category</th>
                 <th>Quantity</th>
+                <th>Product</th>
+                <th>Date</th>
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -101,10 +113,12 @@ const DamageModal = (props) => {
               {damages ? (damages.map((damage) => (
                 <tr key={damage.id}>
                   <td>{damage.id}</td>
-                  <td>{damage.category}</td>
-                  <td>{damage.quantity}</td>
+                  <td>{damage.attributes.category}</td>
+                  <td>{damage.attributes.quantity}</td>
+                  <td>{damage.attributes.product_name}</td>
+                  <td>{damage.attributes.damage_date}</td>
                   <td className="d-flex justify-content-between align-items-center">
-                    <Button variant="outline"><Trash3 color="white" size={16} /></Button>
+                    <Button variant="outline"><Trash3 color="red" size={16} /></Button>
                     <Button variant="outline"><Edit color="white" size={16} /></Button>
                     <Button variant="outline"><Details color="white" size={16} /></Button>
                   </td>

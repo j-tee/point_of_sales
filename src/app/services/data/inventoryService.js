@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const InventoryService = {
   addDamages: (obj) => axios.post(`${API_URL}api/v1/products/addDamages`, obj, authHeader()),
-  getDamages: (productId) => axios.get(`${API_URL}api/v1/products/getDamages/${productId}`, authHeader()),
+  getDamages: (productId, page, perPage) => axios.get(`${API_URL}api/v1/products/getDamages/${productId}/${page}/${perPage}`, authHeader()),
   deleteNotification: (id) => axios.delete(`${API_URL}api/v1/products/removeNotification/${id}`),
   getNotifications: (storeId) => axios.get(`${API_URL}api/v1/products/getNotifications/${storeId}`, authHeader()),
   addNotification: (notification) => axios.post(`${API_URL}api/v1/products/addNotification`, notification, authHeader()),

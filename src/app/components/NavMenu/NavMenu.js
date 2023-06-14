@@ -17,6 +17,7 @@ import { logoutUser } from '../../redux/reducers/authSlice';
 import ToastContext from '../ToastContext';
 import { showToastify } from '../Toastify';
 import UserProfile from '../UserProfile';
+import SessionValidation from '../sessionValidation';
 
 const CartContext = createContext();
 
@@ -48,7 +49,7 @@ const NavMenu = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('headers');
         setUser('');
-        showToastify('User logged out failed', 'error');
+        showToastify('User log out action failed. Session may have already expired: All previous session data will be deleted', 'error');
       } else {
         showToastify('User logged out successfully', 'success');
         setUser('');
@@ -60,6 +61,7 @@ const NavMenu = () => {
   };
   useEffect(() => {
     // localStorage.clear();
+    SessionValidation.validateToken();
     if (!user) {
       setUser(JSON.parse(localStorage.getItem('user')));
     }

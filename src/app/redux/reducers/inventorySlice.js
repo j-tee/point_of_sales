@@ -188,9 +188,10 @@ export const deleteNotification = createAsyncThunk(
 
 export const getDamages = createAsyncThunk(
   'inventory/getDamages',
-  async (id, thunkAPI) => {
+  async (params, thunkAPI) => {
     try {
-      const response = await InventoryService.getDamages(id);
+      const response = await InventoryService.getDamages(params.productId, params.page, params.perPage);
+      console.log('rsponse data from damages', response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -216,7 +217,7 @@ export const inventorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getDamages.fulfilled, (state, action) => ({ ...state, damages: action.payload, isLoading: false }));
+      .addCase(getDamages.fulfilled, (state, action) => ({ ...state, damages: action.payload.damages.data, isLoading: false }));
     builder
       .addCase(getDamages.pending, (state) => ({ ...state, isLoading: true }));
     builder

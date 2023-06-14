@@ -42,7 +42,7 @@ const Login = (props) => {
       } else {
         setLoginModalOpen(false);
         setTimeout(() => {
-          // window.location.reload();
+          window.location.reload();
         }, 3000);
       }
     }).catch((error) => {
