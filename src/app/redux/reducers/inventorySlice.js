@@ -14,6 +14,7 @@ const initialState = {
   countries: [],
   names: [],
   manufacturers: [],
+  damages: [],
   pagination: { totalItems: 0, currentPage: 0, perPage: 0 },
 };
 
@@ -185,11 +186,41 @@ export const deleteNotification = createAsyncThunk(
   },
 );
 
+export const getDamages = createAsyncThunk(
+  'inventory/getDamages',
+  async (id, thunkAPI) => {
+    try {
+      const response = await InventoryService.getDamages(id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const addDamages = createAsyncThunk(
+  'inventory/addDamages',
+  async (obj, thunkAPI) => {
+    console.log('obj===========>', obj);
+    try {
+      const response = await InventoryService.addDamages(obj);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(getDamages.fulfilled, (state, action) => ({ ...state, damages: action.payload, isLoading: false }));
+    builder
+      .addCase(getDamages.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(getDamages.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(deleteNotification.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder

@@ -4,7 +4,7 @@ import React, {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import {
-  Container, Row, Col, Form, Button, Alert, Table, DropdownButton, Dropdown,
+  Container, Row, Col, Form, Button, Alert, Table, DropdownButton, Dropdown, Nav,
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,9 +21,10 @@ import TaxModalDialog from '../Setting/TaxModalDialog';
 import DiscountModalDialog from '../Setting/DiscountModalDialog';
 import ToastContext from '../ToastContext';
 import { showToastify } from '../Toastify';
+import DamageModal from '../DamageModal';
 
 const Inventory = () => {
-  const { stocks, message } = useSelector((state) => state.inventory);
+  const { stocks, message, damages } = useSelector((state) => state.inventory);
   const user = JSON.parse(localStorage.getItem('user'));
   const { outlets } = useSelector((state) => state.shop);
   const { categories } = useSelector((state) => state.category);
@@ -36,6 +37,7 @@ const Inventory = () => {
   const [productName, setProductName] = useState('');
   const [taxModalOpen, setTaxModalOpen] = useState(false);
   const [discountModalOpen, setDiscountModalOpen] = useState(false);
+  const [damageModalOpen, setDamageModalOpen] = useState(false);
   const { setShowToast } = useContext(ToastContext);
   const [params, setParams] = useState({
     storeId: 0,
@@ -314,6 +316,11 @@ const Inventory = () => {
   useEffect(() => {
     dispatch(getCategories(storeId));
   }, [dispatch, storeId]);
+
+  const openDamageModalOpen = (productId) => {
+    setProductId(productId);
+    setDamageModalOpen(true);
+  };
   return (
     <Container>
       <Row className="pt-5 mt-5">
@@ -481,24 +488,24 @@ const Inventory = () => {
                       <td><strong>{product.attributes.product_name}</strong></td>
                       <td>{product.attributes.qty_in_stock}</td>
                       <td>{product.attributes.qty_of_product_sold}</td>
-                      <td>{product.attributes.qty_damaged}</td>
+                      <td><Nav.Link className="custom-link" onClick={() => openDamageModalOpen(product.id)}>{product.attributes.qty_damaged}</Nav.Link></td>
                       <td>{product.attributes.qty_available}</td>
                       {/* <td>
                         {product.exp_date && new Date(product.exp_date) < new Date() ? (
                           <Alert variant="danger">Expired!</Alert>
                         ) : null}
                       </td> */}
-                      <td>
+                      <td className="d-flex justify-content-between align-items-center">
                         {product.exp_date && new Date(product.exp_date) < new Date() ? (
                           <Alert variant="danger">Expired! &nbsp; &nbsp;</Alert>
                         ) : null}
-                        <Button variant="danger" size="sm" onClick={() => handleTaxModalClick(product.id)}><Trash3 color="white" size={16} /></Button>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Trash3 color="red" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
-                        <Button variant="primary" size="sm" onClick={() => handleTaxModalClick(product.id)}><Edit color="white" size={16} /></Button>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Edit color="blue" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
-                        <Button variant="info" size="sm" onClick={() => handleTaxModalClick(product.id)}><Details color="white" size={16} /></Button>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Details color="blue" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
-                        <Button variant="info" size="sm" onClick={() => handleTaxModalClick(product.id)}>Taxes</Button>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}>Taxes</Nav.Link>
                       </td>
                     </tr>
                   ))}
@@ -554,6 +561,15 @@ const Inventory = () => {
         onRequestClose={() => setDiscountModalOpen(false)}
         calculateModalPosition={calculateModalPosition}
         setDiscountModalOpen={setDiscountModalOpen}
+      />
+
+      <DamageModal
+        isOpen={damageModalOpen}
+        damages={damages}
+        productId={productId}
+        onRequestClose={() => setDamageModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setDamageModalOpen={setDamageModalOpen}
       />
     </Container>
   );

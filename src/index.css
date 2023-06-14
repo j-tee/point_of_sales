@@ -31,6 +31,18 @@ code {
   }
 }
 
+.custom-link {
+  color: blue; /* Set the desired color, e.g., blue */
+  text-decoration: underline;
+}
+
+.danger-link {
+  color: red;
+}
+.action-link {
+  color: blue; 
+}
+
 /* Hide pagination navigation for small screens */
 @media (max-width: 576px) {
   .pagination .page-item:first-child,
