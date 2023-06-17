@@ -385,7 +385,7 @@ const Inventory = () => {
               </Form.Group>
               <Form.Group>
                 <Form.Label>Expiry Date</Form.Label>
-                <Form.Control type="date" name="expiry_date" value={expDate} onChange={handleChange} />
+                <Form.Control type="date" name="exp_date" value={expDate} onChange={handleChange} />
               </Form.Group>
               <Form.Group>
                 <Form.Label>Manufacture Date</Form.Label>
@@ -497,11 +497,20 @@ const Inventory = () => {
                       <td>{product.attributes.qty_of_product_sold}</td>
                       <td><Nav.Link className="custom-link" onClick={() => openDamageModalOpen(product.id)}>{product.attributes.qty_damaged}</Nav.Link></td>
                       <td>{product.attributes.qty_available}</td>
-                      {/* <td>
-                        {product.exp_date && new Date(product.exp_date) < new Date() ? (
-                          <Alert variant="danger">Expired!</Alert>
-                        ) : null}
-                      </td> */}
+                      <td>
+                        {product.attributes.exp_date && new Date(product.attributes.exp_date) > new Date() ? (
+                          <div>
+                            <span>
+                              {Math.ceil((new Date(product.attributes.exp_date) - new Date()) / (1000 * 60 * 60 * 24))}
+                              {' '}
+                              days left
+                            </span>
+                          </div>
+                        ) : (
+                          <Nav.Link color="red">Expired!</Nav.Link>
+                        )}
+
+                      </td>
                       <td className="d-flex justify-content-between align-items-center">
                         {product.exp_date && new Date(product.exp_date) < new Date() ? (
                           <Alert variant="danger">Expired! &nbsp; &nbsp;</Alert>

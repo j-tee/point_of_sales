@@ -1,4 +1,4 @@
-import { showToastify } from './Toastify';
+// import { showToastify } from './Toastify';
 
 const sessionInfo = localStorage.getItem('header');
 
@@ -18,12 +18,12 @@ const SessionValidation = {
         // Perform necessary actions like logging out the user or redirecting
         localStorage.removeItem('user');
         localStorage.removeItem('headers');
-        showToastify('Session has expired!', 'error');
+        window.location.reload();
         return false;
       }
       return true;
     }
-    showToastify('No session information found! You must log in!!', 'error');
+    // showToastify('No session information found! You must log in!!', 'error');
     return false;
   },
 };

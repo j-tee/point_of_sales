@@ -15,6 +15,7 @@ const initialState = {
   names: [],
   manufacturers: [],
   damages: [],
+  summary: [],
   pagination: { totalItems: 0, currentPage: 0, perPage: 0 },
 };
 
@@ -191,7 +192,6 @@ export const getDamages = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await InventoryService.getDamages(params.productId, params.page, params.perPage);
-      console.log('rsponse data from damages', response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -202,9 +202,20 @@ export const getDamages = createAsyncThunk(
 export const addDamages = createAsyncThunk(
   'inventory/addDamages',
   async (obj, thunkAPI) => {
-    console.log('obj===========>', obj);
     try {
       const response = await InventoryService.addDamages(obj);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getInventorySummary = createAsyncThunk(
+  'inventory/getInventorySummary',
+  async (_, thunkAPI) => {
+    try {
+      const response = await InventoryService.getInventorySummary();
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -216,6 +227,12 @@ export const inventorySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(getInventorySummary.fulfilled, (state, action) => ({ ...state, summary: action.payload.stores.data, isLoading: false }));
+    builder
+      .addCase(getInventorySummary.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(getInventorySummary.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(getDamages.fulfilled, (state, action) => ({ ...state, damages: action.payload.damages.data, isLoading: false }));
     builder

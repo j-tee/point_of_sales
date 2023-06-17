@@ -67,7 +67,7 @@ const Payment = (props) => {
           navigate(`/receipt/${orderId}`); // Fix template string
         });
     }
-  }, [paymentObject, dispatch, submitted, navigate, orderId]); // Include storeId and orderId in dependencies
+  }, [paymentObject, dispatch, submitted, navigate, orderId, setShowToast]); // Include storeId and orderId in dependencies
 
   return (
     <Modal show={isOpen} onHide={onRequestClose} size="lg" style={{ marginTop: `${modalTop}px` }}>

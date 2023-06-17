@@ -22,8 +22,8 @@ import SessionValidation from '../sessionValidation';
 const CartContext = createContext();
 
 const NavMenu = () => {
-  const { isLoggedIn, message } = useSelector((state) => state.auth);
-  const [user, setUser] = useState();
+  const { user } = useSelector((state) => state.auth);
+  const [userObject, setUserObject] = useState(user);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
@@ -48,11 +48,12 @@ const NavMenu = () => {
       if (response.error) {
         localStorage.removeItem('user');
         localStorage.removeItem('headers');
-        setUser('');
+        setUserObject('');
         showToastify('User log out action failed. Session may have already expired: All previous session data will be deleted', 'error');
       } else {
         showToastify('User logged out successfully', 'success');
-        setUser('');
+        setUserObject('');
+        localStorage.clear();
       }
     });
   };
@@ -60,15 +61,17 @@ const NavMenu = () => {
     setLoginModalOpen(true);
   };
   useEffect(() => {
-    // localStorage.clear();
-    SessionValidation.validateToken();
-    if (!user) {
-      setUser(JSON.parse(localStorage.getItem('user')));
+    setUserObject(JSON.parse(localStorage.getItem('user')));
+  }, []);
+  useEffect(() => {
+    if (userObject) {
+      if (!SessionValidation.validateToken()) {
+        setShowToast(true);
+        localStorage.clear();
+        showToastify('Session has expired', 'error');
+      }
     }
-    // if (!isLoggedIn) {
-    //   showToastify(message, 'success');
-    // }
-  }, [user, setUser, isLoggedIn, message]);
+  }, [setShowToast, userObject]);
   return (
     <div>
       <Navbar bg="primary" expand="lg">
@@ -109,8 +112,8 @@ const NavMenu = () => {
           <Twitter color="royalblue" size={16} />
         </span>
         <span>
-          <NavDropdown bg="primary" title={(user !== undefined) && (user) ? `Welcome ${user.username}` : 'Log In/Sign Up'} id="basic-nav-dropdown" className="pe-5 me-5">
-            {user ? (
+          <NavDropdown bg="primary" title={userObject ? `Welcome ${userObject.username}` : 'Log In/Sign Up'} id="basic-nav-dropdown" className="pe-5 me-5">
+            {userObject ? (
               <>
                 <Nav.Link onClick={() => handleUserProfileClick()}>Your Profile</Nav.Link>
                 <NavDropdown.Divider />

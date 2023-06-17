@@ -37,6 +37,11 @@ const Login = (props) => {
     };
     dispatch(loginUser(userData)).then((response) => {
       setShowToast(true);
+      if (response.meta) {
+        if (response.meta.requestStatus === 'fulfilled') {
+          showToastify('User logged in successfully', 'success');
+        }
+      }
       if (response.error) {
         showToastify(`Login failure!! ${response.payload}`, 'error');
       } else {

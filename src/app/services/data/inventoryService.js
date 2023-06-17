@@ -5,6 +5,7 @@ import authHeader from '../../helpers/authHeader';
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const InventoryService = {
+  getInventorySummary: () => axios.get(`${API_URL}api/v1/stores/getInventorySummary`, authHeader()),
   addDamages: (obj) => axios.post(`${API_URL}api/v1/products/addDamages`, obj, authHeader()),
   getDamages: (productId, page, perPage) => axios.get(`${API_URL}api/v1/products/getDamages/${productId}/${page}/${perPage}`, authHeader()),
   deleteNotification: (id) => axios.delete(`${API_URL}api/v1/products/removeNotification/${id}`),
