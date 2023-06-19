@@ -15,7 +15,9 @@ const initialState = {
   names: [],
   manufacturers: [],
   damages: [],
+  damage: {},
   summary: [],
+  sales: [],
   pagination: { totalItems: 0, currentPage: 0, perPage: 0 },
 };
 
@@ -48,6 +50,18 @@ export const addProduct = createAsyncThunk(
   async (product, thunkAPI) => {
     try {
       const response = InventoryService.addProduct(product);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const updateProduct = createAsyncThunk(
+  'inventory/updateProduct',
+  async (product, thunkAPI) => {
+    try {
+      const response = InventoryService.updateProduct(product.id, product);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -213,9 +227,21 @@ export const addDamages = createAsyncThunk(
 
 export const getInventorySummary = createAsyncThunk(
   'inventory/getInventorySummary',
-  async (_, thunkAPI) => {
+  async (params, thunkAPI) => {
     try {
-      const response = await InventoryService.getInventorySummary();
+      const response = await InventoryService.getInventorySummary(params.storeId, params.stockId, params.categoryId, params.productName);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getUniqueProductNamesByCategory = createAsyncThunk(
+  'inventory/getUniqueProductNamesByCategory',
+  async (categoryId, thunkAPI) => {
+    try {
+      const response = await InventoryService.getUniqueProductNamesByCategory(categoryId);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -228,6 +254,12 @@ export const inventorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateProduct.fulfilled, (state, action) => ({ ...state, product: action.payload, isLoading: false }));
+    builder
+      .addCase(updateProduct.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(updateProduct.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
       .addCase(getInventorySummary.fulfilled, (state, action) => ({ ...state, summary: action.payload.stores.data, isLoading: false }));
     builder
       .addCase(getInventorySummary.pending, (state) => ({ ...state, isLoading: true }));
@@ -239,6 +271,12 @@ export const inventorySlice = createSlice({
       .addCase(getDamages.pending, (state) => ({ ...state, isLoading: true }));
     builder
       .addCase(getDamages.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
+      .addCase(addDamages.fulfilled, (state, action) => ({ ...state, damage: action.payload, isLoading: false }));
+    builder
+      .addCase(addDamages.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(addDamages.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(deleteNotification.fulfilled, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
@@ -269,6 +307,12 @@ export const inventorySlice = createSlice({
       .addCase(getUniqueProductNamesByStock.pending, (state) => ({ ...state, isLoading: true }));
     builder
       .addCase(getUniqueProductNamesByStock.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
+    builder
+      .addCase(getUniqueProductNamesByCategory.fulfilled, (state, action) => ({ ...state, names: action.payload, isLoading: false }));
+    builder
+      .addCase(getUniqueProductNamesByCategory.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(getUniqueProductNamesByCategory.rejected, (state, action) => ({ ...state, message: action.payload, isLoading: false }));
     builder
       .addCase(getStock.fulfilled, (state, action) => ({ ...state, stock: action.payload, isLoading: false }));
     builder
@@ -303,6 +347,7 @@ export const inventorySlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => ({
         ...state,
         products: action.payload.products.data,
+        sales: action.payload.sales,
         isLoading: false,
         pagination: {
           totalItems: action.payload.pagination.total_items,

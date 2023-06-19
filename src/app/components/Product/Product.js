@@ -4,7 +4,7 @@ import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import {
-  Card, Button, Row, Col, DropdownButton, Dropdown, Form, FormControl,
+  Card, Button, Row, Col, DropdownButton, Dropdown, Form,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -19,7 +19,7 @@ import PaginationComponent from '../Pagination';
 
 const Product = () => {
   const {
-    products, pagination, stock, names,
+    products, pagination, stock, names, sales,
   } = useSelector((state) => state.inventory);
   const { stocks } = useSelector((state) => state.inventory);
   const [storeId, setStoreId] = useState(0);
@@ -205,14 +205,14 @@ const Product = () => {
                 </Col>
                 <Col md={3}>
                   <Form.Group>
-                    <FormControl as="select" name="product_name" value={productName} onChange={handleProductNameChange}>
+                    <Form.Control as="select" name="product_name" value={productName} onChange={handleProductNameChange}>
                       <option value="">---Select Product Name---</option>
                       {names.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
                       ))}
-                    </FormControl>
+                    </Form.Control>
                   </Form.Group>
                 </Col>
                 <Col md={3}>
@@ -301,19 +301,32 @@ const Product = () => {
           </Row>
         </Col>
         <Col md={4}>
-          <Row>
-            <h1>Orders</h1>
-            <hr />
-          </Row>
-          <Row>
-            <Customer setAddToCartButtonStatus={setAddToCartButtonStatus} storeId={storeId} />
-          </Row>
-          <Row>
-            <Order trigger={trigger} stockId={stockId} productId={productId} categoryId={categoryId} startOrder={startOrder} orderStatus={orderStatus} />
-          </Row>
-          <Row>
-            <OrderLineItem productId={productId} trigger={trigger} />
-          </Row>
+          <Card>
+            <Card.Body>
+              <Row>
+                <h1>Orders</h1>
+                <hr />
+              </Row>
+              <Row>
+                <Customer setAddToCartButtonStatus={setAddToCartButtonStatus} storeId={storeId} />
+              </Row>
+              <Row>
+                <Order trigger={trigger} stockId={stockId} productId={productId} categoryId={categoryId} startOrder={startOrder} orderStatus={orderStatus} />
+              </Row>
+              <Row>
+                <OrderLineItem productId={productId} trigger={trigger} />
+              </Row>
+            </Card.Body>
+          </Card>
+          <Card>
+            <Card.Body>
+              <Row>
+                <h4>Today&apos;s Sales</h4>
+                <hr />
+                <span className="ps-5">{sales}</span>
+              </Row>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </div>

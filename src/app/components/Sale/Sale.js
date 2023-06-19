@@ -3,19 +3,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Alert, Card, Col, Container, Form, Row, Table,
 } from 'react-bootstrap';
-import { getInventorySummary, getStocks } from '../../redux/reducers/inventorySlice';
+import { getInventorySummary, getStocks, getUniqueProductNamesByCategory } from '../../redux/reducers/inventorySlice';
 import { showToastify } from '../Toastify';
 import { getShops } from '../../redux/reducers/shopSlice';
 import { getCategories } from '../../redux/reducers/categorySlice';
 
 const Sale = () => {
-  const { summary } = useSelector((state) => state.inventory);
+  const { summary, names } = useSelector((state) => state.inventory);
   const { outlets } = useSelector((state) => state.shop);
   const [storeId, setStoreId] = useState();
   const { stocks } = useSelector((state) => state.inventory);
   const [stockId, setStockId] = useState();
   const { categories } = useSelector((state) => state.category);
   const [categoryId, setCategoryId] = useState();
+  const [productName, setProductName] = useState();
+  const [params, setParams] = useState({
+    storeId: 0,
+    stockId: 0,
+    categoryId: 0,
+    productName: null,
+  });
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getShops(0)).then((res) => {
@@ -27,18 +34,22 @@ const Sale = () => {
     });
   }, []);
   useEffect(() => {
-    dispatch(getInventorySummary()).then((res) => {
+    dispatch(getInventorySummary(params)).then((res) => {
       if (res.error) {
         if (res.error.message === 'Rejected') {
           showToastify('Failed to load balance sheet information ', 'error');
         }
       }
     });
-  }, [dispatch]);
+  }, [dispatch, params]);
 
   const handleShopChange = (e) => {
     const { value } = e.target;
     setStoreId(value);
+    setParams((prevParams) => ({
+      ...prevParams,
+      storeId: value,
+    }));
     dispatch(getCategories(value)).then((res) => {
       if (res.error) {
         if (res.error.message === 'Rejected') {
@@ -57,11 +68,35 @@ const Sale = () => {
   const handleStockChange = (e) => {
     const { value } = e.target;
     setStockId(value);
+    setParams((prevParams) => ({
+      ...prevParams,
+      stockId: value,
+    }));
   };
 
   const handleCategoryChange = (e) => {
     const { value } = e.target;
     setCategoryId(value);
+    setParams((prevParams) => ({
+      ...prevParams,
+      categoryId: value,
+    }));
+    dispatch(getUniqueProductNamesByCategory(value)).then((res) => {
+      if (res.error) {
+        if (res.error.message === 'Rehected') {
+          showToastify('Failed to list of product names', 'error');
+        }
+      }
+    });
+  };
+
+  const handleProductNameChange = (e) => {
+    const { value } = e.target;
+    setProductName(value);
+    setParams((prevParams) => ({
+      ...prevParams,
+      productName: value,
+    }));
   };
   return (
     <Container>
@@ -93,10 +128,20 @@ const Sale = () => {
           </Col>
           <Col>
             <Form.Group>
-              <Form.Control as="select" value={categoryId} onChange={(E) => handleCategoryChange(E)}>
+              <Form.Control as="select" value={categoryId} onChange={(e) => handleCategoryChange(e)}>
                 <option value=" ">---Select Category---</option>
                 {categories && categories.map((category) => (
                   <option value={category.id} key={category.id}>{category.name}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Control as="select" value={productName} onChange={(e) => handleProductNameChange(e)}>
+                <option value=" ">---Select Product---</option>
+                {names && names.map((name) => (
+                  <option value={name} key={name}>{name}</option>
                 ))}
               </Form.Control>
             </Form.Group>

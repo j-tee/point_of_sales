@@ -22,6 +22,8 @@ import DiscountModalDialog from '../Setting/DiscountModalDialog';
 import ToastContext from '../ToastContext';
 import { showToastify } from '../Toastify';
 import DamageModal from '../DamageModal';
+import EditProductModal from '../Product/EditProductModal';
+import ProductDetailsModal from '../Product/ProductDetailsModal';
 
 const Inventory = () => {
   const { stocks, message, damages } = useSelector((state) => state.inventory);
@@ -38,6 +40,8 @@ const Inventory = () => {
   const [taxModalOpen, setTaxModalOpen] = useState(false);
   const [discountModalOpen, setDiscountModalOpen] = useState(false);
   const [damageModalOpen, setDamageModalOpen] = useState(false);
+  const [productModalOpen, setProductModalOpen] = useState(false);
+  const [productDetailsModalOpen, setProductDetailsModalOpen] = useState(false);
   const { setShowToast } = useContext(ToastContext);
   const [params, setParams] = useState({
     storeId: 0,
@@ -60,6 +64,7 @@ const Inventory = () => {
   const [stockDate, setStockDate] = useState('');
   const dispatch = useDispatch();
   const [newStock, setNewStock] = useState();
+  const [product, setProduct] = useState();
   const [newProduct, setNewProduct] = useState({
     store_id: '',
     product_name: '',
@@ -313,6 +318,11 @@ const Inventory = () => {
     }
   }, [dispatch, newStock, trigger, storeId, setShowToast, message]);
 
+  const handleProductModalOpen = (prod) => {
+    setProduct(prod);
+    setProductModalOpen(true);
+  };
+
   useEffect(() => {
     dispatch(getCategories(storeId));
   }, [dispatch, storeId]);
@@ -327,6 +337,11 @@ const Inventory = () => {
       }
     });
     setDamageModalOpen(true);
+  };
+
+  const handleProductDetailsModalOpen = (prod) => {
+    setProduct(prod);
+    setProductDetailsModalOpen(true);
   };
   return (
     <Container>
@@ -517,9 +532,9 @@ const Inventory = () => {
                         ) : null}
                         <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Trash3 color="red" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
-                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Edit color="blue" size={16} /></Nav.Link>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleProductModalOpen(product)}><Edit color="blue" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
-                        <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}><Details color="blue" size={16} /></Nav.Link>
+                        <Nav.Link className="action-link" size="sm" onClick={() => handleProductDetailsModalOpen(product)}><Details color="blue" size={16} /></Nav.Link>
                         &nbsp; &nbsp;
                         <Nav.Link className="action-link" size="sm" onClick={() => handleTaxModalClick(product.id)}>Apply Taxes</Nav.Link>
                       </td>
@@ -586,6 +601,22 @@ const Inventory = () => {
         onRequestClose={() => setDamageModalOpen(false)}
         calculateModalPosition={calculateModalPosition}
         setDamageModalOpen={setDamageModalOpen}
+      />
+      <EditProductModal
+        isOpen={productModalOpen}
+        product={product}
+        onRequestClose={() => setProductModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setProductModalOpen={setProductModalOpen}
+        user={user}
+        outlets={outlets}
+      />
+      <ProductDetailsModal
+        isOpen={productDetailsModalOpen}
+        product={product}
+        onRequestClose={() => setProductDetailsModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setProductDetailsModalOpen={setProductDetailsModalOpen}
       />
     </Container>
   );

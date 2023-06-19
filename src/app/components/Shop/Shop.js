@@ -4,19 +4,21 @@ import {
   Button, Col, Container, Form, ListGroup, Row,
 } from 'react-bootstrap';
 import {
-  getShops, registerShop, updateShop, deleteShop,
+  getShops, registerShop, deleteShop, getShop,
 } from '../../redux/reducers/shopSlice';
 import ShopService from '../../services/data/shopService';
 import ToastContext from '../ToastContext';
 import { showToastify } from '../Toastify';
+import EditShopModal from './EditShopModal';
 
 const Shop = () => {
   const dispatch = useDispatch();
   // localStorage.clear();
-  const { outlets, isLoading } = useSelector((state) => state.shop);
+  const { outlets, isLoading, shop } = useSelector((state) => state.shop);
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const { setShowToast } = useContext(ToastContext);
+  const [shopUpdateModalOpen, setShopUpdateModalOpen] = useState(false);
   // const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
@@ -45,21 +47,13 @@ const Shop = () => {
     }
   };
 
-  const handleUpdateShop = async (id, shop) => {
-    try {
-      dispatch(updateShop({ id, store: shop })).then((res) => {
-        setShowToast(true);
-        if (!res.error) {
-          showToastify('Shop updated successfully', 'success');
-        } else if (res.error) {
-          if (res.error.message === 'Rejected') {
-            showToastify('Failed to update shop', 'error');
-          }
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  const handleUpdateShop = (id) => {
+    dispatch(getShop(id)).then((res) => {
+      if (res.error) {
+        showToastify('Could not load shop details for update', 'error');
+      }
+    });
+    setShopUpdateModalOpen(true);
   };
 
   const handleDeleteShop = async (id) => {
@@ -78,6 +72,11 @@ const Shop = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const calculateModalPosition = () => {
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    return (window.innerHeight - navbarHeight) / 5;
   };
 
   return (
@@ -119,13 +118,20 @@ const Shop = () => {
                   React.createElement('h5', null, shop.name),
                   React.createElement('p', null, shop.address)),
                 React.createElement('div', null,
-                  React.createElement(Button, { variant: 'warning', className: 'me-2', onClick: () => handleUpdateShop(shop.id, shop) }, 'Edit'),
+                  React.createElement(Button, { variant: 'warning', className: 'me-2', onClick: () => handleUpdateShop(shop.id) }, 'Edit'),
                   React.createElement(Button, { variant: 'danger', onClick: () => handleDeleteShop(shop.id) }, 'Delete')))
             ))}
           </ListGroup>
 
         </>
       )}
+      <EditShopModal
+        isOpen={shopUpdateModalOpen}
+        shop={shop}
+        onRequestClose={() => setShopUpdateModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setShopUpdateModalOpen={setShopUpdateModalOpen}
+      />
     </Container>
   );
 };

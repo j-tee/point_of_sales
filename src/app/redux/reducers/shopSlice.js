@@ -60,6 +60,7 @@ export const getShop = createAsyncThunk(
 export const updateShop = createAsyncThunk(
   'shop/updateShop',
   async (shop, thunkAPI) => {
+    console.log('SHOP=========>', shop);
     try {
       const response = await ShopService.updateShop(shop.id, shop);
       return await response.data;
@@ -87,13 +88,13 @@ export const shopSlice = createSlice({
     builder
       .addCase(registerShop.rejected, (state, action) => ({ ...state, isLoading: false, message: action.payload }));
     builder
-      .addCase(getShop.fulfilled, (state, action) => ({ ...state, outlets: action.payload }));
+      .addCase(getShop.fulfilled, (state, action) => ({ ...state, shop: action.payload, isLoading: false }));
     builder
       .addCase(getShop.pending, (state) => ({ ...state, isLoading: true }));
     builder
       .addCase(getShop.rejected, (state, action) => ({ ...state, message: action.payload }));
     builder
-      .addCase(updateShop.fulfilled, (state, action) => ({ ...state, outlets: action.payload }));
+      .addCase(updateShop.fulfilled, (state, action) => ({ ...state, shop: action.payload, isLoading: false }));
     builder
       .addCase(updateShop.pending, (state) => ({ ...state, isLoading: true }));
     builder
