@@ -44,13 +44,20 @@ const Register = (props) => {
           password,
           password_confirmation: confirmPassword,
         };
-        dispatch(registerUser(userData)).then(() => {
-          // showToast(message, isSuccessful ? 'sucess' : 'danger');
-          setEmail('');
-          setName('');
-          setPassword('');
-          setConfirmPassword('');
-          setRegisterModalOpen(false);
+        dispatch(registerUser(userData)).then((res) => {
+          setShowToast(true);
+          if (!res.error) {
+            showToastify('You registration was successfully completed. You will receive an email with a link to confirm your account', 'sucess');
+            setEmail('');
+            setName('');
+            setPassword('');
+            setConfirmPassword('');
+            setRegisterModalOpen(false);
+          } else if (res.error) {
+            if (res.error.message === 'Rejected') {
+              showToastify('Your registration has failed, The email address you provided may have already been taken', 'error');
+            }
+          }
         }).catch((error) => {
           setError(error);
           showToastify(error.message, 'error');

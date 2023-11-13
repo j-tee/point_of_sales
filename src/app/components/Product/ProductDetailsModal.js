@@ -10,31 +10,9 @@ const ProductDetailsModal = (props) => {
     isOpen, onRequestClose, calculateModalPosition, setProductDetailsModalOpen, product,
   } = props;
   const [modalTop, setModalTop] = useState(0);
-  //   const [stockId, setStockId] = useState();
-  //   const [productName, setProductName] = useState();
-  //   const [categoryId, setCategoryId] = useState();
-  //   const [unitPrice, setUnitPrice] = useState();
-  //   const [qtyInStock, setQtyInStock] = useState();
-  //   const [expDate, setExpDate] = useState();
-  //   const [manufacturer, setManufacturer] = useState();
-  //   const [description, setDescription] = useState();
-  //   const [country, setCountry] = useState();
-  //   const [unitCost, setUnitCost] = useState();
-  //   const [mnfDate, setMnfDate] = useState();
 
   useEffect(() => {
     if (isOpen && product) {
-    //   setStockId(product.attributes.stock_id);
-    //   setCategoryId(product.attributes.category_id);
-    //   setCountry(product.attributes.country);
-    //   setDescription(product.attributes.description);
-    //   setUnitCost(product.attributes.unit_cost);
-    //   setUnitPrice(product.attributes.unit_price);
-    //   setExpDate(product.attributes.exp_date);
-    //   setManufacturer(product.attributes.manufacturer);
-    //   setMnfDate(product.attributes.mnf_date);
-    //   setProductName(product.attributes.product_name);
-    //   setQtyInStock(product.attributes.qty_in_stock);
       setModalTop(calculateModalPosition());
       setProductDetailsModalOpen(true);
     }

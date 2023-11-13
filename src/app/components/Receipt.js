@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { getTaxes } from '../redux/reducers/taxSlice';
 import { ComponentToPrint } from './print/ComponentToPrint';
@@ -13,6 +13,7 @@ const Receipt = () => {
   const { orderId } = useParams();
   const dispatch = useDispatch();
   const componentRef = useRef();
+  const navigate = useNavigate();
   const handleRectToPrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -25,6 +26,7 @@ const Receipt = () => {
     if (taxes) {
       handleRectToPrint();
     }
+    navigate('/products');
   }, []);
   return (
     <div style={{ display: 'none' }}>

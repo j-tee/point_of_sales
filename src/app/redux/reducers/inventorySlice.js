@@ -225,6 +225,18 @@ export const addDamages = createAsyncThunk(
   },
 );
 
+export const updateDamages = createAsyncThunk(
+  'inventory/updateDamages',
+  async (obj, thunkAPI) => {
+    try {
+      const response = await InventoryService.updateDamages(obj.damages.id, obj);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  },
+);
+
 export const getInventorySummary = createAsyncThunk(
   'inventory/getInventorySummary',
   async (params, thunkAPI) => {
@@ -253,6 +265,12 @@ export const inventorySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(updateDamages.fulfilled, (state, action) => ({ ...state, damage: action.payload, isLoading: false }));
+    builder
+      .addCase(updateDamages.pending, (state) => ({ ...state, isLoading: true }));
+    builder
+      .addCase(updateDamages.rejected, (state) => ({ ...state, message: 'Failed to update database', isLoading: false }));
     builder
       .addCase(updateProduct.fulfilled, (state, action) => ({ ...state, product: action.payload, isLoading: false }));
     builder

@@ -2,13 +2,14 @@
 import { Details, Edit } from '@mui/icons-material';
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  Alert, Button, Col, Container, Form, Modal, Row, Table,
+  Alert, Button, Col, Container, Form, Modal, Nav, Row, Table,
 } from 'react-bootstrap';
 import { Trash3 } from 'react-bootstrap-icons';
 import { useDispatch } from 'react-redux';
 import { showToastify } from './Toastify';
 import { addDamages, getDamages } from '../redux/reducers/inventorySlice';
 import ToastContext from './ToastContext';
+import EditDamageModal from './EditDamageModal';
 
 const DamageModal = (props) => {
   const {
@@ -19,7 +20,9 @@ const DamageModal = (props) => {
   const [quantity, setQuantity] = useState(qty);
   const [damageDate, setDamageDate] = useState();
   const { setShowToast } = useContext(ToastContext);
+  const [editDamageModalModalOpen, setEditDamageModalOpen] = useState();
   const dispatch = useDispatch();
+  const [damage, setDamage] = useState();
   const [params, setParams] = useState({
     productId,
     page: 1,
@@ -57,6 +60,10 @@ const DamageModal = (props) => {
         }
       }
     });
+  };
+  const handleEditModalOpen = (damageObj) => {
+    setDamage(damageObj);
+    setEditDamageModalOpen(true);
   };
   return (
     <Container>
@@ -118,9 +125,9 @@ const DamageModal = (props) => {
                   <td>{damage.attributes.product_name}</td>
                   <td>{damage.attributes.damage_date}</td>
                   <td className="d-flex justify-content-between align-items-center">
-                    <Button variant="outline"><Trash3 color="red" size={16} /></Button>
-                    <Button variant="outline"><Edit color="white" size={16} /></Button>
-                    <Button variant="outline"><Details color="white" size={16} /></Button>
+                    <Nav.Link variant="outline"><Trash3 color="red" size={16} /></Nav.Link>
+                    <Nav.Link onClick={() => handleEditModalOpen(damage)} variant="outline"><Edit color="white" size={16} /></Nav.Link>
+                    <Nav.Link variant="outline"><Details color="white" size={16} /></Nav.Link>
                   </td>
                 </tr>
               ))) : <Alert>No Records Found!!!</Alert>}
@@ -129,6 +136,13 @@ const DamageModal = (props) => {
         </Modal.Body>
         <Modal.Footer />
       </Modal>
+      <EditDamageModal
+        isOpen={editDamageModalModalOpen}
+        damage={damage}
+        onRequestClose={() => setEditDamageModalOpen(false)}
+        calculateModalPosition={calculateModalPosition}
+        setEditDamageModalOpen={setEditDamageModalOpen}
+      />
     </Container>
   );
 };

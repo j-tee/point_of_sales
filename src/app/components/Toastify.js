@@ -24,7 +24,7 @@ const Toast = () => {
   return (showToast
     ? (
       <ToastContainer
-        position="top-right"
+        position="top-center"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop

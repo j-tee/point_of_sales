@@ -24,6 +24,7 @@ import OrderDetails from './app/components/Order/OrderDetails';
 import CustomerDetail from './app/components/CustomerDetail';
 import PaymentDetails from './app/components/PaymentDetails';
 import SessionValidation from './app/components/sessionValidation';
+import Confirmation from './app/components/Confirmation';
 // import { resetMessage } from './app/redux/reducers/authSlice';
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
         <Route path="/email" element={<Email />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/payments" element={<PaymentDetails />} />
+        <Route path="/confirmation" element={<Confirmation />} />
         <Route path="/receipt/:orderId" element={<Receipt />} />
         <Route path="/resetPassword/:resetPasswordToken" element={<ResetPasswordComponent />} />
       </Routes>

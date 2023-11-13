@@ -36,10 +36,13 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
         .then((res) => {
           setShowToast(true);
           if (!res.error) {
-            showToastify('Customer added to role successfully', 'success');
+            showToastify('new customer created successfully', 'success');
           } else if (res.error) {
             if (res.error.message === 'Rejected') {
-              showToastify('Failed to add customer', 'error');
+              showToastify('Failed to add customer. Please make sure a shop/store is selected', 'error');
+              setTimeout(() => {
+                window.location.reload();
+              }, 5000);
             }
           }
           dispatch(getCustomers(storeId));
@@ -72,10 +75,13 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
         .then((res) => {
           setShowToast(true);
           if (!res.error) {
-            showToastify('Customer added to role successfully', 'success');
+            showToastify('New customer created successfully', 'success');
           } else if (res.error) {
             if (res.error.message === 'Rejected') {
-              showToastify('Failed to add customer', 'error');
+              showToastify('Failed to add customer. Please make sure a shop/store is selected', 'error');
+              setTimeout(() => {
+                window.location.reload();
+              }, 5000);
             }
           }
         });
@@ -86,6 +92,7 @@ const Customer = ({ setAddToCartButtonStatus, storeId }) => {
     setAddToCartButtonStatus(true);
     dispatch(resetCustomer());
     setInitialLoad(true);
+    window.location.reload();
   };
 
   const handleCustomerChange = (event) => {

@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Pagination, Table, DropdownButton, Dropdown, Button,
+  Pagination, Table, DropdownButton, Dropdown, Button, Nav,
 } from 'react-bootstrap';
 import {
   addOrderLineItem, getOrderLineItem, getOrderLineItems, updateOrderLineItem,
@@ -121,13 +121,15 @@ const OrderLineItem = ({ productId, trigger }) => {
               <tr key={item.attributes.id}>
                 <td>{item.attributes.product_name}</td>
                 <td>
-                  <Button onClick={() => hanleQtyUpdate('decrease', item.attributes.quantity, item.attributes.id)} id={`${item.attributes.id}-decrease`} variant="transparent" className="text-white">
-                    -
-                  </Button>
-                  {item.attributes.quantity}
-                  <Button id={`${item.attributes.id}-increase`} onClick={() => hanleQtyUpdate('increase', item.attributes.quantity, item.attributes.id)} variant="transparent" className="text-white">
-                    +
-                  </Button>
+                  <span className="d-flex justify-content-between align-items-center">
+                    <Nav.Link onClick={() => hanleQtyUpdate('decrease', item.attributes.quantity, item.attributes.id)} id={`${item.attributes.id}-decrease`} variant="transparent" className="text-white">
+                      -
+                    </Nav.Link>
+                    {item.attributes.quantity}
+                    <Nav.Link id={`${item.attributes.id}-increase`} onClick={() => hanleQtyUpdate('increase', item.attributes.quantity, item.attributes.id)} variant="transparent" className="text-white">
+                      +
+                    </Nav.Link>
+                  </span>
                 </td>
                 <td>
                   GHS

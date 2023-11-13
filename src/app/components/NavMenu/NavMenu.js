@@ -62,6 +62,7 @@ const NavMenu = () => {
   };
   useEffect(() => {
     setUserObject(JSON.parse(localStorage.getItem('user')));
+    console.log('userObject in useEffect=======', userObject);
   }, []);
   useEffect(() => {
     if (userObject) {
